@@ -48,7 +48,7 @@ export const scheduleService = {
     ])
 
     const docenteMap = Object.fromEntries(
-      docentes.map(d => [d.id, `${d.name} ${d.lastname}${d.surname ? ' ' + d.surname : ''}`])
+      docentes.map(d => [d.id, { name: `${d.name} ${d.lastname}${d.surname ? ' ' + d.surname : ''}`, ci: d.ci }])
     )
     const asignaturaMap = Object.fromEntries(
       asignaturas.map(a => [a.id, `${a.name} (${a.acronym})`])
@@ -59,10 +59,19 @@ export const scheduleService = {
 
     return schedules.map(s => ({
       ...s,
-      professor_name: docenteMap[s.professor_id] || '—',
+      professor_name: docenteMap[s.professor_id]?.name || '—',
+      professor_ci: docenteMap[s.professor_id]?.ci || '—',
       subject_name: asignaturaMap[s.subject_id] || '—',
       period_name: periodoMap[s.period_id] || '—',
     }))
+  },
+
+  async getByGroup(professorId, subjectId, periodId) {
+    return scheduleRepository.getByGroup(professorId, subjectId, periodId)
+  },
+
+  async deleteByGroup(professorId, subjectId, periodId) {
+    return scheduleRepository.deleteByGroup(professorId, subjectId, periodId)
   },
 
   async getById(id) {
@@ -129,5 +138,13 @@ export const scheduleService = {
       updated_at: now,
     }))
     return scheduleRepository.createMany(entries)
+  },
+
+  async replaceSubject(id, newSubjectId) {
+    return scheduleRepository.update(id, { subject_id: newSubjectId })
+  },
+
+  async deletePermanently(id) {
+    return scheduleRepository.deletePermanently(id)
   },
 }

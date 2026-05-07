@@ -1,6 +1,3 @@
-import { useEffect, useState } from 'react'
-import { settingsService } from '../../settings/services/settingsService'
-
 const DAYS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
 
 function generateTimeSlots() {
@@ -37,17 +34,6 @@ function getCoveredSlots(start, end) {
   return covered
 }
 
-function slotShift(start_at, sett) {
-  const m = timeToMinutes(start_at)
-  const mStart = timeToMinutes(sett?.morning_start || '07:00')
-  const mEnd = timeToMinutes(sett?.morning_end || '12:00')
-  const aStart = timeToMinutes(sett?.afternoon_start || '13:00')
-  const aEnd = timeToMinutes(sett?.afternoon_end || '18:00')
-  if (m >= mStart && m < mEnd) return 'mañana'
-  if (m >= aStart && m < aEnd) return 'tarde'
-  return 'noche'
-}
-
 const DAY_MAP = {
   lunes: 0, martes: 1, miércoles: 2, jueves: 3, viernes: 4, sábado: 5, domingo: 6,
 }
@@ -57,18 +43,13 @@ export default function WeeklyCalendar({
   loading,
   interactive,
   selectedCells,
+  replaceTargets,
+  deleteTargets,
   onToggleCell,
+  onToggleReplace,
+  onToggleDelete,
   subjectAcronym,
 }) {
-  const [settings, setSettings] = useState(null)
-
-  useEffect(() => {
-    if (!interactive) return
-    let mounted = true
-    settingsService.get().then(s => { if (mounted) setSettings(s) }).catch(() => {})
-    return () => { mounted = false }
-  }, [interactive])
-
   const scheduleMap = {}
 
   if (schedules) {
@@ -93,12 +74,28 @@ export default function WeeklyCalendar({
     return scheduleMap[`${row}-${col}`] || []
   }
 
-  function handleCellClick(rowIdx, day, start_at, end_at) {
-    if (!interactive || !onToggleCell) return
-    const occup = getScheduleInfo(rowIdx, DAY_MAP[day])
-    if (occup.length > 0) return
-    const shift = slotShift(start_at, settings)
-    onToggleCell(day, start_at, end_at, shift)
+  function handleCellClick(e, rowIdx, day, start_at, end_at) {
+    if (!interactive) return
+
+    const colIdx = DAY_MAP[day]
+    const schedulesInCell = scheduleMap[`${rowIdx}-${colIdx}`] || []
+    const hasExisting = schedulesInCell.length > 0
+
+    if (hasExisting) {
+      if (e.ctrlKey || e.metaKey) {
+        const ids = schedulesInCell.map(s => s.id)
+        for (const id of ids) {
+          if (onToggleDelete) onToggleDelete(id)
+        }
+      } else {
+        const ids = schedulesInCell.map(s => s.id)
+        for (const id of ids) {
+          if (onToggleReplace) onToggleReplace(id)
+        }
+      }
+    } else if (onToggleCell) {
+      onToggleCell(day, start_at, end_at)
+    }
   }
 
   function isSelected(day, start_at, end_at) {
@@ -108,6 +105,15 @@ export default function WeeklyCalendar({
       if (parts[0] === day && parts[1] === start_at && parts[2] === end_at) return true
     }
     return false
+  }
+
+  function cellStyle(hasData, sel, replaced, deleted) {
+    if (sel) return 'bg-emerald-100 dark:bg-emerald-900/40 cursor-pointer'
+    if (deleted) return 'bg-red-100 dark:bg-red-900/40 cursor-pointer line-through'
+    if (replaced) return 'bg-amber-100 dark:bg-amber-900/40 cursor-pointer'
+    if (hasData) return 'bg-indigo-100 dark:bg-indigo-900/40 cursor-pointer hover:bg-indigo-200 dark:hover:bg-indigo-800/40'
+    if (interactive) return 'bg-white dark:bg-gray-800 cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20'
+    return 'bg-white dark:bg-gray-800'
   }
 
   return (
@@ -144,43 +150,50 @@ export default function WeeklyCalendar({
                   {nextTime}
                 </td>
                 {DAYS.map((day, colIdx) => {
-                  const schedules = getScheduleInfo(rowIdx, colIdx)
-                  const hasData = schedules.length > 0
+                  const data = getScheduleInfo(rowIdx, colIdx)
+                  const hasData = data.length > 0
                   const sel = isSelected(day, time, nextTime)
-                  const clickable = interactive && !hasData && !!onToggleCell
+                  const replaced = hasData && data.some(s => replaceTargets?.has(s.id))
+                  const deleted = hasData && data.some(s => deleteTargets?.has(s.id))
 
                   return (
                     <td
                       key={`${time}-${day}`}
-                      onClick={() => handleCellClick(rowIdx, day, time, nextTime)}
-                      className={`px-1 py-1 text-center border-b border-r border-gray-200 dark:border-gray-700 transition-colors select-none ${
-                        hasData
-                          ? 'bg-indigo-100 dark:bg-indigo-900/40'
-                          : sel
-                            ? 'bg-emerald-100 dark:bg-emerald-900/40'
-                            : clickable
-                              ? 'bg-white dark:bg-gray-800 cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20'
-                              : 'bg-white dark:bg-gray-800'
-                      }`}
+                      onClick={(e) => handleCellClick(e, rowIdx, day, time, nextTime)}
+                      className={`px-1 py-1 text-center border-b border-r border-gray-200 dark:border-gray-700 transition-colors select-none ${cellStyle(hasData, sel, replaced, deleted)}`}
                       title={
-                        hasData
-                          ? schedules.map(s => `${s.professor_name} - ${s.subject_name}`).join('\n')
-                          : sel && subjectAcronym
-                            ? subjectAcronym
+                        sel && subjectAcronym
+                          ? subjectAcronym
+                          : hasData
+                            ? data.map(s => {
+                                if (replaceTargets?.has(s.id)) return `${s.subject_acronym || s.subject_name}/${subjectAcronym}`
+                                if (deleteTargets?.has(s.id)) return `${s.subject_acronym || s.subject_name} (eliminar)`
+                                return `${s.professor_name} - ${s.subject_name}`
+                              }).join('\n')
                             : ''
                       }
                     >
                       <div className="text-[10px] leading-tight">
-                        {hasData ? (
-                          schedules.map(s => (
-                            <div key={s.id} className="truncate max-w-[70px]" title={s.subject_name}>
-                              {s.subject_acronym || s.subject_name}
-                            </div>
-                          ))
-                        ) : sel ? (
+                        {sel ? (
                           <span className="font-semibold text-emerald-700 dark:text-emerald-300">
                             {subjectAcronym || '✓'}
                           </span>
+                        ) : hasData ? (
+                          data.map(s => {
+                            const isReplaced = replaceTargets?.has(s.id)
+                            const isDeleted = deleteTargets?.has(s.id)
+                            return (
+                              <div
+                                key={s.id}
+                                className={`truncate max-w-[70px] ${isDeleted ? 'line-through text-red-600 dark:text-red-400' : ''} ${isReplaced ? 'text-amber-700 dark:text-amber-300' : ''}`}
+                                title={s.subject_name}
+                              >
+                                {isReplaced ? (
+                                  <><span className="line-through text-red-500">{s.subject_acronym || s.subject_name}</span><span className="text-emerald-600 dark:text-emerald-400">/{subjectAcronym}</span></>
+                                ) : (s.subject_acronym || s.subject_name)}
+                              </div>
+                            )
+                          })
                         ) : null}
                       </div>
                     </td>
@@ -194,6 +207,21 @@ export default function WeeklyCalendar({
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-gray-800/60">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600" />
+        </div>
+      )}
+
+      {interactive && (replaceTargets?.size > 0 || deleteTargets?.size > 0) && (
+        <div className="px-3 py-2 border-t border-gray-200 dark:border-gray-700 text-xs flex gap-4">
+          {replaceTargets?.size > 0 && (
+            <span className="text-amber-600 dark:text-amber-400">
+              {replaceTargets.size} horario{replaceTargets.size > 1 ? 's' : ''} marcado{replaceTargets.size > 1 ? 's' : ''} para reemplazar
+            </span>
+          )}
+          {deleteTargets?.size > 0 && (
+            <span className="text-red-600 dark:text-red-400">
+              {deleteTargets.size} horario{deleteTargets.size > 1 ? 's' : ''} marcado{deleteTargets.size > 1 ? 's' : ''} para eliminar
+            </span>
+          )}
         </div>
       )}
     </div>

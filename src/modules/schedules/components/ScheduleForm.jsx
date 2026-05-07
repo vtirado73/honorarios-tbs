@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 const DAYS = [
   { value: 'lunes', label: 'Lunes' },
@@ -21,6 +21,7 @@ export default function ScheduleForm({
   asignaturas,
   carreras = [],
   periodos,
+  defaultValues: dv,
   selectedCells,
   onSubmit,
   onCancel,
@@ -28,17 +29,20 @@ export default function ScheduleForm({
   periodId: controlledPeriodId,
   onPeriodChange,
   onReadyChange,
+  locked,
+  hasPendingChanges,
 }) {
-  const [professorId, setProfessorId] = useState(() => initialData?.professor_id ?? '')
+  const [professorId, setProfessorId] = useState(() => dv?.professorId ?? initialData?.professor_id ?? '')
   const [careerId, setCareerId] = useState(() => {
-    if (initialData?.subject_id) {
-      const sub = asignaturas.find(a => a.id === initialData.subject_id)
+    const sid = dv?.subjectId ?? initialData?.subject_id
+    if (sid) {
+      const sub = asignaturas.find(a => a.id === sid)
       return sub?.career_id ?? ''
     }
     return ''
   })
-  const [subjectId, setSubjectId] = useState(() => initialData?.subject_id ?? '')
-  const [internalPeriodId, setInternalPeriodId] = useState(() => initialData?.period_id ?? '')
+  const [subjectId, setSubjectId] = useState(() => dv?.subjectId ?? initialData?.subject_id ?? '')
+  const [internalPeriodId, setInternalPeriodId] = useState(() => dv?.periodId ?? initialData?.period_id ?? '')
   const [day, setDay] = useState(() => initialData?.day ?? '')
   const [startAt, setStartAt] = useState(() => initialData?.start_at ?? '')
   const [endAt, setEndAt] = useState(() => initialData?.end_at ?? '')
@@ -48,21 +52,16 @@ export default function ScheduleForm({
   const periodId = controlledPeriodId ?? internalPeriodId
   const isCreating = !initialData
 
-  const onReadyChangeRef = useRef(onReadyChange)
-  onReadyChangeRef.current = onReadyChange
-
   const activeDocentes = docentes.filter(d => d.active)
   const activeCarreras = carreras.filter(c => c.active)
   const asignaturasFiltradas = asignaturas.filter(a => a.active && (!careerId || a.career_id === careerId))
   const activePeriodos = periodos.filter(p => p.active)
 
   useEffect(() => {
-    if (!isCreating) return
-    const cb = onReadyChangeRef.current
-    if (!cb) return
+    if (!isCreating || !onReadyChange) return
     const sub = asignaturas.find(a => a.id === subjectId)
-    cb(professorId && subjectId ? { professorId, subjectId, acronym: sub?.acronym || '' } : null)
-  }, [professorId, subjectId, isCreating])
+    onReadyChange(professorId && subjectId ? { professorId, subjectId, acronym: sub?.acronym || '' } : null)
+  }, [professorId, subjectId, onReadyChange, asignaturas, isCreating])
 
   function validate() {
     const errs = {}
@@ -70,7 +69,7 @@ export default function ScheduleForm({
     if (!subjectId) errs.subjectId = 'Debe seleccionar una asignatura'
     if (!periodId) errs.periodId = 'Debe seleccionar un periodo'
     if (isCreating) {
-      if (!selectedCells || selectedCells.size === 0) errs.grid = 'Seleccione al menos un horario en el calendario'
+      if (!hasPendingChanges && (!selectedCells || selectedCells.size === 0)) errs.grid = 'Seleccione al menos un horario en el calendario'
     } else {
       if (!day) errs.day = 'Debe seleccionar un día'
       if (!startAt) errs.startAt = 'Debe ingresar la hora de inicio'
@@ -122,8 +121,11 @@ export default function ScheduleForm({
           </label>
           <select
             value={professorId}
+            disabled={locked}
             onChange={e => { setProfessorId(e.target.value); clearError('professorId') }}
             className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
+              locked ? 'opacity-60 cursor-not-allowed' : ''
+            } ${
               errors.professorId
                 ? 'border-red-500 focus:ring-red-500'
                 : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
@@ -145,8 +147,11 @@ export default function ScheduleForm({
           </label>
           <select
             value={careerId}
+            disabled={locked}
             onChange={e => { setCareerId(e.target.value); setSubjectId(''); clearError('subjectId') }}
-            className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+            className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
+              locked ? 'opacity-60 cursor-not-allowed' : ''
+            } border-gray-300 dark:border-gray-600 focus:ring-indigo-500`}
           >
             <option value="">Todas las carreras</option>
             {activeCarreras.map(c => (
@@ -161,8 +166,11 @@ export default function ScheduleForm({
           </label>
           <select
             value={subjectId}
+            disabled={locked}
             onChange={e => { setSubjectId(e.target.value); clearError('subjectId') }}
             className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
+              locked ? 'opacity-60 cursor-not-allowed' : ''
+            } ${
               errors.subjectId
                 ? 'border-red-500 focus:ring-red-500'
                 : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
@@ -186,8 +194,11 @@ export default function ScheduleForm({
           </label>
           <select
             value={periodId}
+            disabled={locked}
             onChange={handlePeriodChange}
             className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
+              locked ? 'opacity-60 cursor-not-allowed' : ''
+            } ${
               errors.periodId
                 ? 'border-red-500 focus:ring-red-500'
                 : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'

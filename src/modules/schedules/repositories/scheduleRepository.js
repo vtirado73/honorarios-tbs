@@ -49,4 +49,21 @@ export const scheduleRepository = {
     await db.schedules.bulkAdd(entries)
     return entries
   },
+
+  async getByGroup(professorId, subjectId, periodId) {
+    return db.schedules
+      .where({ professor_id: professorId, subject_id: subjectId, period_id: periodId })
+      .toArray()
+  },
+
+  async deleteByGroup(professorId, subjectId, periodId) {
+    const schedules = await this.getByGroup(professorId, subjectId, periodId)
+    const ids = schedules.map(s => s.id)
+    if (ids.length > 0) await db.schedules.bulkDelete(ids)
+    return ids
+  },
+
+  async deletePermanently(id) {
+    await db.schedules.delete(id)
+  },
 }
