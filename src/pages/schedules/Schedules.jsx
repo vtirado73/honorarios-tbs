@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSchedules } from '../../modules/schedules/hooks/useSchedules'
+import { periodoService } from '../../modules/periodos/services/periodoService'
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
@@ -8,6 +10,31 @@ function capitalize(str) {
 export default function Schedules() {
   const navigate = useNavigate()
   const { schedules, loading, error, toggleActive } = useSchedules()
+  const [periodos, setPeriodos] = useState([])
+  const [search, setSearch] = useState('')
+  const [selectedPeriodId, setSelectedPeriodId] = useState('')
+
+  useEffect(() => {
+    let mounted = true
+    periodoService.getAll().then(data => { if (mounted) setPeriodos(data) }).catch(() => {})
+    return () => { mounted = false }
+  }, [])
+
+  const filteredSchedules = schedules.filter(s => {
+    const q = search.toLowerCase().trim()
+    if (q) {
+      const haystack = [
+        s.professor_name,
+        s.subject_name,
+        s.period_name,
+        s.day,
+        s.shift,
+      ].join(' ').toLowerCase()
+      if (!haystack.includes(q)) return false
+    }
+    if (selectedPeriodId && s.period_id !== selectedPeriodId) return false
+    return true
+  })
 
   async function handleToggleActive(schedule) {
     const label = schedule.active ? 'desactivar' : 'activar'
@@ -47,6 +74,31 @@ export default function Schedules() {
         </button>
       </div>
 
+      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+        <div className="relative flex-1">
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          </svg>
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Buscar por docente, asignatura, periodo, día o turno..."
+            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors"
+          />
+        </div>
+        <select
+          value={selectedPeriodId}
+          onChange={e => setSelectedPeriodId(e.target.value)}
+          className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors"
+        >
+          <option value="">Todos los periodos</option>
+          {periodos.map(p => (
+            <option key={p.id} value={p.id}>{p.name}</option>
+          ))}
+        </select>
+      </div>
+
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -68,12 +120,12 @@ export default function Schedules() {
                 <tr>
                   <td colSpan={9} className="px-4 py-12 text-center text-gray-400">Cargando...</td>
                 </tr>
-              ) : schedules.length === 0 ? (
+              ) : filteredSchedules.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="px-4 py-12 text-center text-gray-400">No hay horarios registrados</td>
                 </tr>
               ) : (
-                schedules.map((s, i) => (
+                filteredSchedules.map((s, i) => (
                   <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                     <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{i + 1}</td>
                     <td className="px-4 py-3 text-gray-900 dark:text-white font-medium">{s.professor_name}</td>
