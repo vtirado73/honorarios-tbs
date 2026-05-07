@@ -72,6 +72,12 @@ export const honorarioService = {
           }
         })
 
+        scheduleRows.sort((a, b) => {
+          const cmp = a.subjectAcronym.localeCompare(b.subjectAcronym)
+          if (cmp !== 0) return cmp
+          return a.startAt.localeCompare(b.startAt)
+        })
+
         const dayMinutes = scheduleRows.reduce((sum, r) => sum + r.minutes, 0)
         const dayPay = scheduleRows.reduce((sum, r) => sum + r.pay, 0)
 

@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
+import { PDFDownloadLink } from '@react-pdf/renderer'
 import { honorarioService } from '../../modules/honorarios/services/honorarioService'
+import HonorarioPDF from '../../modules/honorarios/components/HonorarioPDF'
 import db from '../../database/db'
 
 export default function Payroll() {
@@ -180,10 +182,21 @@ export default function Payroll() {
       {/* Report */}
       {report && (
         <div className="space-y-8">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            Periodo: <span className="font-semibold text-gray-700 dark:text-gray-200">{report.periodName}</span>
-            {' | '}Pago por hora: <span className="font-semibold text-gray-700 dark:text-gray-200">Bs {report.formatCurrency(report.payPerHour)}</span>
-            {' | '}Pago por minuto: <span className="font-semibold text-gray-700 dark:text-gray-200">Bs {report.formatCurrency(report.payPerMinute)}</span>
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              Periodo: <span className="font-semibold text-gray-700 dark:text-gray-200">{report.periodName}</span>
+              {' | '}Pago por hora: <span className="font-semibold text-gray-700 dark:text-gray-200">Bs {report.formatCurrency(report.payPerHour)}</span>
+              {' | '}Pago por minuto: <span className="font-semibold text-gray-700 dark:text-gray-200">Bs {report.formatCurrency(report.payPerMinute)}</span>
+            </div>
+            <PDFDownloadLink
+              document={<HonorarioPDF report={report} />}
+              fileName={`honorarios-${report.periodName.replace(/\s+/g, '_')}.pdf`}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+            >
+              {({ loading: pdfLoading }) => (
+                <>{pdfLoading ? 'Generando PDF...' : 'Exportar PDF'}</>
+              )}
+            </PDFDownloadLink>
           </div>
 
           {report.teachers.map(teacher => (
