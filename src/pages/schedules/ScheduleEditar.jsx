@@ -12,6 +12,7 @@ export default function ScheduleEditar() {
   const [schedule, setSchedule] = useState(null)
   const [docentes, setDocentes] = useState([])
   const [asignaturas, setAsignaturas] = useState([])
+  const [carreras, setCarreras] = useState([])
   const [periodos, setPeriodos] = useState([])
 
   useEffect(() => {
@@ -22,8 +23,9 @@ export default function ScheduleEditar() {
       db.docentes.toArray(),
       db.asignaturas.toArray(),
       db.periodos.toArray(),
+      db.carreras.toArray(),
     ])
-      .then(([s, d, a, p]) => {
+      .then(([s, d, a, p, c]) => {
         if (mounted) {
           if (!s) {
             alert('Horario no encontrado')
@@ -34,6 +36,7 @@ export default function ScheduleEditar() {
           setDocentes(d)
           setAsignaturas(a)
           setPeriodos(p)
+          setCarreras(c)
         }
       })
       .catch(() => { if (mounted) alert('Error al cargar el horario'); navigate(-1) })
@@ -74,6 +77,7 @@ export default function ScheduleEditar() {
         initialData={schedule}
         docentes={docentes}
         asignaturas={asignaturas}
+        carreras={carreras}
         periodos={periodos}
         onSubmit={handleSubmit}
         onCancel={() => navigate(-1)}

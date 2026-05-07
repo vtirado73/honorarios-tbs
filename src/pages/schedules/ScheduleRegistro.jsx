@@ -10,6 +10,7 @@ export default function ScheduleRegistro() {
   const [loading, setLoading] = useState(false)
   const [docentes, setDocentes] = useState([])
   const [asignaturas, setAsignaturas] = useState([])
+  const [carreras, setCarreras] = useState([])
   const [periodos, setPeriodos] = useState([])
   const [fetching, setFetching] = useState(true)
 
@@ -23,12 +24,14 @@ export default function ScheduleRegistro() {
       db.docentes.toArray(),
       db.asignaturas.toArray(),
       db.periodos.toArray(),
+      db.carreras.toArray(),
     ])
-      .then(([d, a, p]) => {
+      .then(([d, a, p, c]) => {
         if (mounted) {
           setDocentes(d)
           setAsignaturas(a)
           setPeriodos(p)
+          setCarreras(c)
         }
       })
       .finally(() => { if (mounted) setFetching(false) })
@@ -90,6 +93,7 @@ export default function ScheduleRegistro() {
           <ScheduleForm
             docentes={docentes}
             asignaturas={asignaturas}
+            carreras={carreras}
             periodos={periodos}
             periodId={selectedPeriodId}
             onPeriodChange={handlePeriodChange}

@@ -19,6 +19,7 @@ export default function ScheduleForm({
   initialData,
   docentes,
   asignaturas,
+  carreras = [],
   periodos,
   onSubmit,
   onCancel,
@@ -27,6 +28,13 @@ export default function ScheduleForm({
   onPeriodChange,
 }) {
   const [professorId, setProfessorId] = useState(() => initialData?.professor_id ?? '')
+  const [careerId, setCareerId] = useState(() => {
+    if (initialData?.subject_id) {
+      const sub = asignaturas.find(a => a.id === initialData.subject_id)
+      return sub?.career_id ?? ''
+    }
+    return ''
+  })
   const [subjectId, setSubjectId] = useState(() => initialData?.subject_id ?? '')
   const [internalPeriodId, setInternalPeriodId] = useState(() => initialData?.period_id ?? '')
 
@@ -47,7 +55,8 @@ export default function ScheduleForm({
   const [errors, setErrors] = useState({})
 
   const activeDocentes = docentes.filter(d => d.active)
-  const activeAsignaturas = asignaturas.filter(a => a.active)
+  const activeCarreras = carreras.filter(c => c.active)
+  const asignaturasFiltradas = asignaturas.filter(a => a.active && (!careerId || a.career_id === careerId))
   const activePeriodos = periodos.filter(p => p.active)
 
   function validate() {
@@ -113,6 +122,22 @@ export default function ScheduleForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Carrera
+          </label>
+          <select
+            value={careerId}
+            onChange={e => { setCareerId(e.target.value); setSubjectId(''); clearError('subjectId') }}
+            className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+          >
+            <option value="">Todas las carreras</option>
+            {activeCarreras.map(c => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Asignatura <span className="text-red-500">*</span>
           </label>
           <select
@@ -124,8 +149,12 @@ export default function ScheduleForm({
                 : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
             }`}
           >
-            <option value="">Seleccione una asignatura</option>
-            {activeAsignaturas.map(a => (
+            <option value="">
+              {careerId && asignaturasFiltradas.length === 0
+                ? 'No hay asignaturas en esta carrera'
+                : 'Seleccione una asignatura'}
+            </option>
+            {asignaturasFiltradas.map(a => (
               <option key={a.id} value={a.id}>{a.name} ({a.acronym})</option>
             ))}
           </select>
