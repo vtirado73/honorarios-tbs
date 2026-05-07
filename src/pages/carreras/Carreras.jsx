@@ -1,19 +1,15 @@
 import { useNavigate } from 'react-router-dom'
-import { useSchedules } from '../../modules/schedules/hooks/useSchedules'
+import { useCarreras } from '../../modules/carreras/hooks/useCarreras'
 
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
-export default function Schedules() {
+export default function Carreras() {
   const navigate = useNavigate()
-  const { schedules, loading, error, toggleActive } = useSchedules()
+  const { carreras, loading, error, toggleActive } = useCarreras()
 
-  async function handleToggleActive(schedule) {
-    const label = schedule.active ? 'desactivar' : 'activar'
-    if (!window.confirm(`¿Estás seguro de ${label} este horario?`)) return
+  async function handleToggleActive(carrera) {
+    const label = carrera.active ? 'desactivar' : 'activar'
+    if (!window.confirm(`¿Estás seguro de ${label} la carrera "${carrera.name}"?`)) return
     try {
-      await toggleActive(schedule.id)
+      await toggleActive(carrera.id)
     } catch {
       alert('Ocurrió un error al cambiar el estado')
     }
@@ -22,7 +18,7 @@ export default function Schedules() {
   if (error) {
     return (
       <div className="p-4 text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg">
-        Error al cargar horarios: {error}
+        Error al cargar carreras: {error}
       </div>
     )
   }
@@ -31,13 +27,13 @@ export default function Schedules() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Horarios</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Carreras</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Gestión de horarios de clases
+            Gestión de carreras del instituto
           </p>
         </div>
         <button
-          onClick={() => navigate('/schedules/registro')}
+          onClick={() => navigate('/carreras/registro')}
           className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -53,12 +49,8 @@ export default function Schedules() {
             <thead>
               <tr className="bg-gray-50 dark:bg-gray-900/50 text-left text-gray-600 dark:text-gray-400">
                 <th className="px-4 py-3 font-medium w-16">N°</th>
-                <th className="px-4 py-3 font-medium">Docente</th>
-                <th className="px-4 py-3 font-medium">Asignatura</th>
-                <th className="px-4 py-3 font-medium">Periodo</th>
-                <th className="px-4 py-3 font-medium">Día</th>
-                <th className="px-4 py-3 font-medium">Horario</th>
-                <th className="px-4 py-3 font-medium">Turno</th>
+                <th className="px-4 py-3 font-medium w-28">Sigla</th>
+                <th className="px-4 py-3 font-medium">Nombre</th>
                 <th className="px-4 py-3 font-medium w-24">Estado</th>
                 <th className="px-4 py-3 font-medium w-24 text-right">Acciones</th>
               </tr>
@@ -66,35 +58,37 @@ export default function Schedules() {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-12 text-center text-gray-400">Cargando...</td>
+                    <td colSpan={5} className="px-4 py-12 text-center text-gray-400">
+                    Cargando...
+                  </td>
                 </tr>
-              ) : schedules.length === 0 ? (
+              ) : carreras.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-12 text-center text-gray-400">No hay horarios registrados</td>
+                    <td colSpan={5} className="px-4 py-12 text-center text-gray-400">
+                    No hay carreras registradas
+                  </td>
                 </tr>
               ) : (
-                schedules.map((s, i) => (
-                  <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                carreras.map((c, i) => (
+                  <tr key={c.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                     <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{i + 1}</td>
-                    <td className="px-4 py-3 text-gray-900 dark:text-white font-medium">{s.professor_name}</td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{s.subject_name}</td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{s.period_name}</td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{capitalize(s.day)}</td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{s.start_at} - {s.end_at}</td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{capitalize(s.shift)}</td>
+                    <td className="px-4 py-3">
+                      <span className="font-mono font-semibold text-indigo-600 dark:text-indigo-400">{c.acronym || '—'}</span>
+                    </td>
+                    <td className="px-4 py-3 text-gray-900 dark:text-white font-medium">{c.name}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-                        s.active
+                        c.active
                           ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400'
                           : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                       }`}>
-                        {s.active ? 'Activo' : 'Inactivo'}
+                        {c.active ? 'Activo' : 'Inactivo'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <button
-                          onClick={() => navigate(`/schedules/editar/${s.id}`)}
+                          onClick={() => navigate(`/carreras/editar/${c.id}`)}
                           className="p-1.5 rounded-lg text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:text-indigo-400 dark:hover:bg-indigo-900/20 transition-colors"
                           title="Editar"
                         >
@@ -103,16 +97,25 @@ export default function Schedules() {
                           </svg>
                         </button>
                         <button
-                          onClick={() => handleToggleActive(s)}
+                          onClick={() => navigate(`/asignaturas/registro?carrera_id=${c.id}`)}
+                          className="p-1.5 rounded-lg text-gray-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:text-amber-400 dark:hover:bg-amber-900/20 transition-colors"
+                          title="Agregar asignatura"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleToggleActive(c)}
                           className={`p-1.5 rounded-lg transition-colors ${
-                            s.active
+                            c.active
                               ? 'text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-900/20'
                               : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:text-emerald-400 dark:hover:bg-emerald-900/20'
                           }`}
-                          title={s.active ? 'Desactivar' : 'Activar'}
+                          title={c.active ? 'Desactivar' : 'Activar'}
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            {s.active ? (
+                            {c.active ? (
                               <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                             ) : (
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
