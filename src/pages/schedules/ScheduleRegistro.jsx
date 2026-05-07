@@ -134,11 +134,14 @@ export default function ScheduleRegistro() {
 
       // 3. Create new entries
       const entries = Array.isArray(data) ? data : [data]
-      if (entries.length > 0) {
-        await scheduleService.createMany(entries)
-      }
+      if (entries.length > 0) await scheduleService.createMany(entries)
 
-      navigate(-1)
+      // Refresh calendar and reset selections
+      const refreshed = await scheduleService.getByPeriodEnriched(selectedPeriodId)
+      setCalendarLoaded({ periodId: selectedPeriodId, data: refreshed })
+      setSelectedCells(new Set())
+      setReplaceTargets(new Set())
+      setDeleteTargets(new Set())
     } catch (err) {
       if (typeof err === 'object' && !(err instanceof Error)) {
         return
