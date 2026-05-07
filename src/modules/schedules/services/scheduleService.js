@@ -28,13 +28,14 @@ export const scheduleService = {
       docentes.map(d => [d.id, `${d.name} ${d.lastname}${d.surname ? ' ' + d.surname : ''}`])
     )
     const asignaturaMap = Object.fromEntries(
-      asignaturas.map(a => [a.id, `${a.name} (${a.acronym})`])
+      asignaturas.map(a => [a.id, { name: `${a.name} (${a.acronym})`, acronym: a.acronym }])
     )
 
     return schedules.map(s => ({
       ...s,
       professor_name: docenteMap[s.professor_id] || '—',
-      subject_name: asignaturaMap[s.subject_id] || '—',
+      subject_name: asignaturaMap[s.subject_id]?.name || '—',
+      subject_acronym: asignaturaMap[s.subject_id]?.acronym || '',
     }))
   },
 
@@ -116,5 +117,17 @@ export const scheduleService = {
 
   async toggleActive(id) {
     return scheduleRepository.toggleActive(id)
+  },
+
+  async createMany(dataArray) {
+    const now = new Date().toISOString()
+    const entries = dataArray.map(data => ({
+      ...data,
+      id: crypto.randomUUID(),
+      active: true,
+      created_at: now,
+      updated_at: now,
+    }))
+    return scheduleRepository.createMany(entries)
   },
 }

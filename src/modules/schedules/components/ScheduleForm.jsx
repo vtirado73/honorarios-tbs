@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const DAYS = [
   { value: 'lunes', label: 'Lunes' },
@@ -21,11 +21,13 @@ export default function ScheduleForm({
   asignaturas,
   carreras = [],
   periodos,
+  selectedCells,
   onSubmit,
   onCancel,
   loading,
   periodId: controlledPeriodId,
   onPeriodChange,
+  onReadyChange,
 }) {
   const [professorId, setProfessorId] = useState(() => initialData?.professor_id ?? '')
   const [careerId, setCareerId] = useState(() => {
@@ -37,41 +39,48 @@ export default function ScheduleForm({
   })
   const [subjectId, setSubjectId] = useState(() => initialData?.subject_id ?? '')
   const [internalPeriodId, setInternalPeriodId] = useState(() => initialData?.period_id ?? '')
-
-  const periodId = controlledPeriodId ?? internalPeriodId
-
-  function handlePeriodChange(e) {
-    const value = e.target.value
-    if (onPeriodChange) {
-      onPeriodChange(value)
-    }
-    setInternalPeriodId(value)
-    clearError('periodId')
-  }
   const [day, setDay] = useState(() => initialData?.day ?? '')
   const [startAt, setStartAt] = useState(() => initialData?.start_at ?? '')
   const [endAt, setEndAt] = useState(() => initialData?.end_at ?? '')
   const [shift, setShift] = useState(() => initialData?.shift ?? '')
   const [errors, setErrors] = useState({})
 
+  const periodId = controlledPeriodId ?? internalPeriodId
+  const isCreating = !initialData
+
+  const onReadyChangeRef = useRef(onReadyChange)
+  onReadyChangeRef.current = onReadyChange
+
   const activeDocentes = docentes.filter(d => d.active)
   const activeCarreras = carreras.filter(c => c.active)
   const asignaturasFiltradas = asignaturas.filter(a => a.active && (!careerId || a.career_id === careerId))
   const activePeriodos = periodos.filter(p => p.active)
+
+  useEffect(() => {
+    if (!isCreating) return
+    const cb = onReadyChangeRef.current
+    if (!cb) return
+    const sub = asignaturas.find(a => a.id === subjectId)
+    cb(professorId && subjectId ? { professorId, subjectId, acronym: sub?.acronym || '' } : null)
+  }, [professorId, subjectId, isCreating])
 
   function validate() {
     const errs = {}
     if (!professorId) errs.professorId = 'Debe seleccionar un docente'
     if (!subjectId) errs.subjectId = 'Debe seleccionar una asignatura'
     if (!periodId) errs.periodId = 'Debe seleccionar un periodo'
-    if (!day) errs.day = 'Debe seleccionar un día'
-    if (!startAt) errs.startAt = 'Debe ingresar la hora de inicio'
-    if (!endAt) {
-      errs.endAt = 'Debe ingresar la hora de fin'
-    } else if (startAt && endAt && startAt >= endAt) {
-      errs.endAt = 'Debe ser mayor a la hora de inicio'
+    if (isCreating) {
+      if (!selectedCells || selectedCells.size === 0) errs.grid = 'Seleccione al menos un horario en el calendario'
+    } else {
+      if (!day) errs.day = 'Debe seleccionar un día'
+      if (!startAt) errs.startAt = 'Debe ingresar la hora de inicio'
+      if (!endAt) {
+        errs.endAt = 'Debe ingresar la hora de fin'
+      } else if (startAt && endAt && startAt >= endAt) {
+        errs.endAt = 'Debe ser mayor a la hora de inicio'
+      }
+      if (!shift) errs.shift = 'Debe seleccionar un turno'
     }
-    if (!shift) errs.shift = 'Debe seleccionar un turno'
     setErrors(errs)
     return Object.keys(errs).length === 0
   }
@@ -80,19 +89,29 @@ export default function ScheduleForm({
     if (errors[field]) setErrors(prev => { const n = { ...prev }; delete n[field]; return n })
   }
 
+  function handlePeriodChange(e) {
+    const value = e.target.value
+    if (onPeriodChange) onPeriodChange(value)
+    setInternalPeriodId(value)
+    clearError('periodId')
+  }
+
   function handleSubmit(e) {
     e.preventDefault()
     if (!validate()) return
-    onSubmit({
-      professor_id: professorId,
-      subject_id: subjectId,
-      period_id: periodId,
-      day,
-      start_at: startAt,
-      end_at: endAt,
-      shift,
-    })
+
+    if (isCreating) {
+      const entries = Array.from(selectedCells).map(key => {
+        const [day, start_at, end_at, shift] = key.split('|')
+        return { professor_id: professorId, subject_id: subjectId, period_id: periodId, day, start_at, end_at, shift }
+      })
+      onSubmit(entries)
+    } else {
+      onSubmit({ professor_id: professorId, subject_id: subjectId, period_id: periodId, day, start_at: startAt, end_at: endAt, shift })
+    }
   }
+
+  const selectedCount = selectedCells?.size ?? 0
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
@@ -181,87 +200,102 @@ export default function ScheduleForm({
           </select>
           {errors.periodId && <p className="text-sm text-red-500 mt-1">{errors.periodId}</p>}
         </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Día <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={day}
-              onChange={e => { setDay(e.target.value); clearError('day') }}
-              className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
-                errors.day
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
-              }`}
-            >
-              <option value="">Seleccione un día</option>
-              {DAYS.map(d => (
-                <option key={d.value} value={d.value}>{d.label}</option>
-              ))}
-            </select>
-            {errors.day && <p className="text-sm text-red-500 mt-1">{errors.day}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Turno <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={shift}
-              onChange={e => { setShift(e.target.value); clearError('shift') }}
-              className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
-                errors.shift
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
-              }`}
-            >
-              <option value="">Seleccione un turno</option>
-              {SHIFTS.map(s => (
-                <option key={s.value} value={s.value}>{s.label}</option>
-              ))}
-            </select>
-            {errors.shift && <p className="text-sm text-red-500 mt-1">{errors.shift}</p>}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Hora inicio <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="time"
-              value={startAt}
-              onChange={e => { setStartAt(e.target.value); clearError('startAt') }}
-              className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
-                errors.startAt
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
-              }`}
-            />
-            {errors.startAt && <p className="text-sm text-red-500 mt-1">{errors.startAt}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Hora fin <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="time"
-              value={endAt}
-              onChange={e => { setEndAt(e.target.value); clearError('endAt') }}
-              className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
-                errors.endAt
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
-              }`}
-            />
-            {errors.endAt && <p className="text-sm text-red-500 mt-1">{errors.endAt}</p>}
-          </div>
-        </div>
       </div>
+
+      {!isCreating && (
+        <>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Día <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={day}
+                onChange={e => { setDay(e.target.value); clearError('day') }}
+                className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
+                  errors.day
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                }`}
+              >
+                <option value="">Seleccione un día</option>
+                {DAYS.map(d => (
+                  <option key={d.value} value={d.value}>{d.label}</option>
+                ))}
+              </select>
+              {errors.day && <p className="text-sm text-red-500 mt-1">{errors.day}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Turno <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={shift}
+                onChange={e => { setShift(e.target.value); clearError('shift') }}
+                className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
+                  errors.shift
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                }`}
+              >
+                <option value="">Seleccione un turno</option>
+                {SHIFTS.map(s => (
+                  <option key={s.value} value={s.value}>{s.label}</option>
+                ))}
+              </select>
+              {errors.shift && <p className="text-sm text-red-500 mt-1">{errors.shift}</p>}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Hora inicio <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="time"
+                value={startAt}
+                onChange={e => { setStartAt(e.target.value); clearError('startAt') }}
+                className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
+                  errors.startAt
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                }`}
+              />
+              {errors.startAt && <p className="text-sm text-red-500 mt-1">{errors.startAt}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Hora fin <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="time"
+                value={endAt}
+                onChange={e => { setEndAt(e.target.value); clearError('endAt') }}
+                className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
+                  errors.endAt
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                }`}
+              />
+              {errors.endAt && <p className="text-sm text-red-500 mt-1">{errors.endAt}</p>}
+            </div>
+          </div>
+        </>
+      )}
+
+      {isCreating && (
+        <p className="text-sm text-gray-400 dark:text-gray-500">
+          Seleccione los horarios en el calendario de la derecha haciendo clic en las celdas.
+          {selectedCount > 0 && (
+            <span className="ml-1 font-medium text-indigo-500 dark:text-indigo-400">
+              {selectedCount} horario{selectedCount !== 1 ? 's' : ''} seleccionado{selectedCount !== 1 ? 's' : ''}.
+            </span>
+          )}
+        </p>
+      )}
 
       <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
         <button
@@ -276,7 +310,7 @@ export default function ScheduleForm({
           disabled={loading}
           className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? 'Guardando...' : 'Guardar'}
+          {loading ? 'Guardando...' : isCreating ? `Guardar (${selectedCount})` : 'Guardar'}
         </button>
       </div>
     </form>

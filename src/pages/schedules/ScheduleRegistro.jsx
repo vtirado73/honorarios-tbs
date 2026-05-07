@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { scheduleService } from '../../modules/schedules/services/scheduleService'
 import ScheduleForm from '../../modules/schedules/components/ScheduleForm'
 import WeeklyCalendar from '../../modules/schedules/components/WeeklyCalendar'
@@ -16,6 +16,8 @@ export default function ScheduleRegistro() {
 
   const [selectedPeriodId, setSelectedPeriodId] = useState('')
   const [calendarLoaded, setCalendarLoaded] = useState({ periodId: null, data: [] })
+  const [selectedCells, setSelectedCells] = useState(new Set())
+  const [formReady, setFormReady] = useState(null)
 
   useEffect(() => {
     let mounted = true
@@ -51,23 +53,44 @@ export default function ScheduleRegistro() {
     return () => { mounted = false }
   }, [selectedPeriodId])
 
+  useEffect(() => {
+    setSelectedCells(new Set())
+  }, [formReady, selectedPeriodId])
+
   const calendarLoading = selectedPeriodId !== '' && calendarLoaded.periodId !== selectedPeriodId
   const calendarSchedules = calendarLoading ? [] : calendarLoaded.data
+
+  const onToggleCell = useCallback((day, start_at, end_at, shift) => {
+    const key = `${day}|${start_at}|${end_at}|${shift}`
+    setSelectedCells(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }, [])
+
+  const interactive = !!formReady
 
   function handlePeriodChange(periodId) {
     setSelectedPeriodId(periodId)
   }
 
+  function handleReadyChange(ready) {
+    setFormReady(ready)
+  }
+
   async function handleSubmit(data) {
     try {
       setLoading(true)
-      await scheduleService.create(data)
+      const entries = Array.isArray(data) ? data : [data]
+      await scheduleService.createMany(entries)
       navigate(-1)
     } catch (err) {
       if (typeof err === 'object' && !(err instanceof Error)) {
         return
       }
-      alert('Ocurrió un error al guardar el horario')
+      alert('Ocurrió un error al guardar los horarios')
     } finally {
       setLoading(false)
     }
@@ -95,8 +118,10 @@ export default function ScheduleRegistro() {
             asignaturas={asignaturas}
             carreras={carreras}
             periodos={periodos}
+            selectedCells={selectedCells}
             periodId={selectedPeriodId}
             onPeriodChange={handlePeriodChange}
+            onReadyChange={handleReadyChange}
             onSubmit={handleSubmit}
             onCancel={() => navigate(-1)}
             loading={loading}
@@ -115,6 +140,10 @@ export default function ScheduleRegistro() {
           <WeeklyCalendar
             schedules={calendarSchedules}
             loading={calendarLoading}
+            interactive={interactive}
+            selectedCells={selectedCells}
+            onToggleCell={onToggleCell}
+            subjectAcronym={formReady?.acronym || ''}
           />
         </div>
       </div>

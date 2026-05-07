@@ -44,4 +44,9 @@ export const scheduleRepository = {
     })
     return this.getById(id)
   },
+
+  async createMany(entries) {
+    await db.schedules.bulkAdd(entries)
+    return entries
+  },
 }
