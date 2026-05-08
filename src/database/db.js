@@ -34,4 +34,8 @@ db.version(8).stores({
   schedules: 'id, professor_id, subject_id, period_id, day, shift, active, created_at',
 })
 
+db.version(9).stores({
+  holidays: 'id, title, date, active, created_at',
+})
+
 export default db

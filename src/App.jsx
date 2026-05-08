@@ -18,6 +18,9 @@ import ScheduleRegistro from './pages/schedules/ScheduleRegistro'
 import ScheduleEditar from './pages/schedules/ScheduleEditar'
 import Settings from './pages/settings/Settings'
 import Payroll from './pages/payroll/Payroll'
+import Holidays from './pages/holidays/Holidays'
+import HolidayRegistro from './pages/holidays/HolidayRegistro'
+import HolidayEditar from './pages/holidays/HolidayEditar'
 
 export default function App() {
   return (
@@ -52,6 +55,11 @@ export default function App() {
           </Route>
           <Route path="settings" element={<Settings />} />
           <Route path="payroll" element={<Payroll />} />
+          <Route path="holidays">
+            <Route index element={<Holidays />} />
+            <Route path="registro" element={<HolidayRegistro />} />
+            <Route path="editar/:id" element={<HolidayEditar />} />
+          </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

@@ -7,4 +7,5 @@ export const NAV_ITEMS = [
   { label: 'Horarios', path: '/schedules', module: 'schedules' },
   { label: 'Configuración', path: '/settings', module: 'settings' },
   { label: 'Honorarios', path: '/payroll', module: 'payroll' },
+  { label: 'Feriados', path: '/holidays', module: 'holidays' },
 ]
