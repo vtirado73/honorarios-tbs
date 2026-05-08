@@ -2,10 +2,43 @@ import { scheduleRepository } from '../repositories/scheduleRepository'
 import db from '../../../database/db'
 
 const DAYS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
-const SHIFTS = ['mañana', 'tarde', 'noche']
 
 function isValidTime(value) {
   return /^\d{2}:\d{2}$/.test(value)
+}
+
+function parseTime(t) {
+  const [h, m] = t.split(':').map(Number)
+  return h * 60 + m
+}
+
+function determineShiftFromSettings(start_at, settings) {
+  const time = parseTime(start_at)
+
+  if (settings.morning_start && settings.morning_end) {
+    const ms = parseTime(settings.morning_start)
+    const me = parseTime(settings.morning_end)
+    if (time >= ms && time < me) return 'mañana'
+  }
+
+  if (settings.afternoon_start && settings.afternoon_end) {
+    const as = parseTime(settings.afternoon_start)
+    const ae = parseTime(settings.afternoon_end)
+    if (time >= as && time < ae) return 'tarde'
+  }
+
+  if (settings.evening_start && settings.evening_end) {
+    const es = parseTime(settings.evening_start)
+    const ee = parseTime(settings.evening_end)
+    if (time >= es && time < ee) return 'noche'
+  }
+
+  return ''
+}
+
+async function getSettings() {
+  const all = await db.settings.toArray()
+  return all[0] || {}
 }
 
 export const scheduleService = {
@@ -103,25 +136,26 @@ export const scheduleService = {
       errors.end_at = 'La hora de fin debe ser mayor a la hora de inicio'
     }
 
-    if (!data.shift) {
-      errors.shift = 'Debe seleccionar un turno'
-    } else if (!SHIFTS.includes(data.shift)) {
-      errors.shift = 'Turno inválido'
-    }
-
     return errors
   },
 
   async create(data) {
     const errors = this.validate(data)
     if (Object.keys(errors).length > 0) throw errors
-    return scheduleRepository.create(data)
+    const settings = await getSettings()
+    const shift = determineShiftFromSettings(data.start_at, settings)
+    return scheduleRepository.create({ ...data, shift })
   },
 
   async update(id, data) {
-    const errors = this.validate(data)
+    const enriched = { ...data }
+    if (data.start_at) {
+      const settings = await getSettings()
+      enriched.shift = determineShiftFromSettings(data.start_at, settings)
+    }
+    const errors = this.validate(enriched)
     if (Object.keys(errors).length > 0) throw errors
-    return scheduleRepository.update(id, data)
+    return scheduleRepository.update(id, enriched)
   },
 
   async toggleActive(id) {
@@ -130,8 +164,10 @@ export const scheduleService = {
 
   async createMany(dataArray) {
     const now = new Date().toISOString()
+    const settings = await getSettings()
     const entries = dataArray.map(data => ({
       ...data,
+      shift: determineShiftFromSettings(data.start_at, settings),
       id: crypto.randomUUID(),
       active: true,
       created_at: now,

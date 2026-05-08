@@ -125,13 +125,14 @@ export const honorarioService = {
       }
     })
 
-    const grandTotal = teachers.reduce((sum, t) => sum + t.totalPay, 0)
+    const teachersWithData = teachers.filter(t => t.entries.length > 0)
+    const grandTotal = teachersWithData.reduce((sum, t) => sum + t.totalPay, 0)
 
     return {
       periodName: period.name,
       payPerHour,
       payPerMinute,
-      teachers,
+      teachers: teachersWithData,
       grandTotal,
       formatCurrency,
     }

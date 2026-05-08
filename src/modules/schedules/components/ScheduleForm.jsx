@@ -9,12 +9,6 @@ const DAYS = [
   { value: 'sábado', label: 'Sábado' },
 ]
 
-const SHIFTS = [
-  { value: 'mañana', label: 'Mañana' },
-  { value: 'tarde', label: 'Tarde' },
-  { value: 'noche', label: 'Noche' },
-]
-
 export default function ScheduleForm({
   initialData,
   docentes,
@@ -46,7 +40,6 @@ export default function ScheduleForm({
   const [day, setDay] = useState(() => initialData?.day ?? '')
   const [startAt, setStartAt] = useState(() => initialData?.start_at ?? '')
   const [endAt, setEndAt] = useState(() => initialData?.end_at ?? '')
-  const [shift, setShift] = useState(() => initialData?.shift ?? '')
   const [errors, setErrors] = useState({})
 
   const periodId = controlledPeriodId ?? internalPeriodId
@@ -78,7 +71,6 @@ export default function ScheduleForm({
       } else if (startAt && endAt && startAt >= endAt) {
         errs.endAt = 'Debe ser mayor a la hora de inicio'
       }
-      if (!shift) errs.shift = 'Debe seleccionar un turno'
     }
     setErrors(errs)
     return Object.keys(errs).length === 0
@@ -106,7 +98,7 @@ export default function ScheduleForm({
       })
       onSubmit(entries)
     } else {
-      onSubmit({ professor_id: professorId, subject_id: subjectId, period_id: periodId, day, start_at: startAt, end_at: endAt, shift })
+      onSubmit({ professor_id: professorId, subject_id: subjectId, period_id: periodId, day, start_at: startAt, end_at: endAt })
     }
   }
 
@@ -215,48 +207,25 @@ export default function ScheduleForm({
 
       {!isCreating && (
         <>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Día <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={day}
-                onChange={e => { setDay(e.target.value); clearError('day') }}
-                className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
-                  errors.day
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
-                }`}
-              >
-                <option value="">Seleccione un día</option>
-                {DAYS.map(d => (
-                  <option key={d.value} value={d.value}>{d.label}</option>
-                ))}
-              </select>
-              {errors.day && <p className="text-sm text-red-500 mt-1">{errors.day}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Turno <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={shift}
-                onChange={e => { setShift(e.target.value); clearError('shift') }}
-                className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
-                  errors.shift
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
-                }`}
-              >
-                <option value="">Seleccione un turno</option>
-                {SHIFTS.map(s => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
-              </select>
-              {errors.shift && <p className="text-sm text-red-500 mt-1">{errors.shift}</p>}
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Día <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={day}
+              onChange={e => { setDay(e.target.value); clearError('day') }}
+              className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
+                errors.day
+                  ? 'border-red-500 focus:ring-red-500'
+                  : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+              }`}
+            >
+              <option value="">Seleccione un día</option>
+              {DAYS.map(d => (
+                <option key={d.value} value={d.value}>{d.label}</option>
+              ))}
+            </select>
+            {errors.day && <p className="text-sm text-red-500 mt-1">{errors.day}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">

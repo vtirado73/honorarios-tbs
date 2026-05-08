@@ -64,8 +64,14 @@ export default function Carreras() {
                 </tr>
               ) : carreras.length === 0 ? (
                 <tr>
-                    <td colSpan={5} className="px-4 py-12 text-center text-gray-400">
-                    No hay carreras registradas
+                  <td colSpan={5} className="px-4 py-12 text-center text-gray-400">
+                    <p className="mb-3">No hay carreras registradas</p>
+                    <button
+                      onClick={() => navigate('/carreras/importar')}
+                      className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
+                    >
+                      Subir carreras vía Excel
+                    </button>
                   </td>
                 </tr>
               ) : (

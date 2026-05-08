@@ -76,7 +76,15 @@ export default function Asignaturas() {
                 </tr>
               ) : asignaturas.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-gray-400">No hay asignaturas registradas</td>
+                  <td colSpan={6} className="px-4 py-12 text-center text-gray-400">
+                    <p className="mb-3">No hay asignaturas registradas</p>
+                    <button
+                      onClick={() => navigate('/asignaturas/importar')}
+                      className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
+                    >
+                      Subir asignaturas vía Excel
+                    </button>
+                  </td>
                 </tr>
               ) : (
                 asignaturas.map((a, i) => (

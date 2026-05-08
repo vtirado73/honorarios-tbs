@@ -20,9 +20,12 @@ export default function Schedules() {
           subject_name: s.subject_name,
           period_name: s.period_name,
           count: 1,
+          shifts: new Set([s.shift]),
         })
       } else {
-        map.get(k).count++
+        const g = map.get(k)
+        g.count++
+        if (s.shift) g.shifts.add(s.shift)
       }
     }
     return Array.from(map.values())
@@ -66,6 +69,7 @@ export default function Schedules() {
                 <th className="px-4 py-3 font-medium">Docente</th>
                 <th className="px-4 py-3 font-medium">Asignatura</th>
                 <th className="px-4 py-3 font-medium">Periodo</th>
+                <th className="px-4 py-3 font-medium w-24">Turno</th>
                 <th className="px-4 py-3 font-medium w-20 text-center">Cant.</th>
                 <th className="px-4 py-3 font-medium w-20 text-right">Acciones</th>
               </tr>
@@ -73,11 +77,11 @@ export default function Schedules() {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">Cargando...</td>
+                  <td colSpan={8} className="px-4 py-12 text-center text-gray-400">Cargando...</td>
                 </tr>
               ) : groups.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">No hay horarios registrados</td>
+                  <td colSpan={8} className="px-4 py-12 text-center text-gray-400">No hay horarios registrados</td>
                 </tr>
               ) : (
                 groups.map((g, i) => (
@@ -87,6 +91,9 @@ export default function Schedules() {
                     <td className="px-4 py-3 text-gray-900 dark:text-white">{g.professor_name}</td>
                     <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{g.subject_name}</td>
                     <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{g.period_name}</td>
+                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300 capitalize">
+                      {g.shifts.size > 0 ? Array.from(g.shifts).filter(Boolean).join(', ') : '—'}
+                    </td>
                     <td className="px-4 py-3 text-center">
                       <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-900/20 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
                         {g.count}

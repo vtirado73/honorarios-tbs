@@ -4,12 +4,15 @@ import Dashboard from './pages/dashboard/Dashboard'
 import Docentes from './pages/docentes/Docentes'
 import DocenteRegistro from './pages/docentes/DocenteRegistro'
 import DocenteEditar from './pages/docentes/DocenteEditar'
+import DocenteImportar from './pages/docentes/DocenteImportar'
 import Carreras from './pages/carreras/Carreras'
 import CarreraRegistro from './pages/carreras/CarreraRegistro'
 import CarreraEditar from './pages/carreras/CarreraEditar'
+import CarreraImportar from './pages/carreras/CarreraImportar'
 import Asignaturas from './pages/asignaturas/Asignaturas'
 import AsignaturaRegistro from './pages/asignaturas/AsignaturaRegistro'
 import AsignaturaEditar from './pages/asignaturas/AsignaturaEditar'
+import AsignaturaImportar from './pages/asignaturas/AsignaturaImportar'
 import Periodos from './pages/periodos/Periodos'
 import PeriodoRegistro from './pages/periodos/PeriodoRegistro'
 import PeriodoEditar from './pages/periodos/PeriodoEditar'
@@ -33,16 +36,19 @@ export default function App() {
             <Route index element={<Docentes />} />
             <Route path="registro" element={<DocenteRegistro />} />
             <Route path="editar/:id" element={<DocenteEditar />} />
+            <Route path="importar" element={<DocenteImportar />} />
           </Route>
           <Route path="carreras">
             <Route index element={<Carreras />} />
             <Route path="registro" element={<CarreraRegistro />} />
             <Route path="editar/:id" element={<CarreraEditar />} />
+            <Route path="importar" element={<CarreraImportar />} />
           </Route>
           <Route path="asignaturas">
             <Route index element={<Asignaturas />} />
             <Route path="registro" element={<AsignaturaRegistro />} />
             <Route path="editar/:id" element={<AsignaturaEditar />} />
+            <Route path="importar" element={<AsignaturaImportar />} />
           </Route>
           <Route path="periodos">
             <Route index element={<Periodos />} />
