@@ -38,4 +38,8 @@ db.version(9).stores({
   holidays: 'id, title, date, active, created_at',
 })
 
+db.version(10).stores({
+  users: 'id, user',
+})
+
 export default db

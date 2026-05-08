@@ -179,8 +179,26 @@ export default function Payroll() {
         </div>
       )}
 
+      {/* Loading overlay */}
+      {loading && (
+        <div className="flex items-center justify-center py-24">
+          <div className="flex flex-col items-center gap-3">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600" />
+            <p className="text-sm text-gray-500 dark:text-gray-400">Generando reporte...</p>
+          </div>
+        </div>
+      )}
+
       {/* Report */}
-      {report && (
+      {report && !loading && report.teachers.length === 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-center h-32 text-gray-400 dark:text-gray-500 text-sm">
+            No hay horarios registrados en este periodo
+          </div>
+        </div>
+      )}
+
+      {report && !loading && report.teachers.length > 0 && (
         <div className="space-y-8">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -188,15 +206,20 @@ export default function Payroll() {
               {' | '}Pago por hora: <span className="font-semibold text-gray-700 dark:text-gray-200">Bs {report.formatCurrency(report.payPerHour)}</span>
               {' | '}Pago por minuto: <span className="font-semibold text-gray-700 dark:text-gray-200">Bs {report.formatCurrency(report.payPerMinute)}</span>
             </div>
-            <PDFDownloadLink
-              document={<HonorarioPDF report={report} />}
-              fileName={`honorarios-${report.periodName.replace(/\s+/g, '_')}.pdf`}
-              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
-            >
-              {({ loading: pdfLoading }) => (
-                <>{pdfLoading ? 'Generando PDF...' : 'Exportar PDF'}</>
-              )}
-            </PDFDownloadLink>
+            {report.teachers.length > 0 && (
+              <PDFDownloadLink
+                document={<HonorarioPDF report={report} />}
+                fileName={`honorarios-${report.periodName.replace(/\s+/g, '_')}.pdf`}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+              >
+                {({ loading: pdfLoading }) => (
+                  <span className="flex items-center gap-2">
+                    {pdfLoading && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />}
+                    {pdfLoading ? 'Generando PDF...' : 'Exportar PDF'}
+                  </span>
+                )}
+              </PDFDownloadLink>
+            )}
           </div>
 
           {report.teachers.map(teacher => (
@@ -289,7 +312,7 @@ export default function Payroll() {
         </div>
       )}
 
-      {!report && !loading && !error && (
+      {!report && !loading && !error && !fetching && (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-center h-48 text-gray-400 dark:text-gray-500 text-sm">
             Seleccione un periodo y genere el reporte
