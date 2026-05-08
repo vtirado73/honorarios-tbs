@@ -21,6 +21,22 @@ function formatCurrency(n) {
   return n.toLocaleString('es-BO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+function mergeContiguous(schedules) {
+  if (schedules.length <= 1) return schedules
+  const sorted = [...schedules].sort((a, b) => a.start_at.localeCompare(b.start_at))
+  const merged = [sorted[0]]
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = merged[merged.length - 1]
+    const curr = sorted[i]
+    if (prev.subject_id === curr.subject_id && prev.end_at === curr.start_at) {
+      merged[merged.length - 1] = { ...prev, end_at: curr.end_at }
+    } else {
+      merged.push(curr)
+    }
+  }
+  return merged
+}
+
 export const honorarioService = {
   async generate(periodId, docenteId) {
     const [period, settings, allSchedules, allSubjects, allHolidays] = await Promise.all([
@@ -60,7 +76,9 @@ export const honorarioService = {
 
         if (daySchedules.length === 0) continue
 
-        const scheduleRows = daySchedules.map(s => {
+        const mergedSchedules = mergeContiguous(daySchedules)
+
+        const scheduleRows = mergedSchedules.map(s => {
           const subject = subjectMap[s.subject_id]
           const minutes = parseTime(s.end_at) - parseTime(s.start_at)
           const pay = minutes * payPerMinute
