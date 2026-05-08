@@ -23,11 +23,12 @@ function formatCurrency(n) {
 
 export const honorarioService = {
   async generate(periodId, docenteId) {
-    const [period, settings, allSchedules, allSubjects] = await Promise.all([
+    const [period, settings, allSchedules, allSubjects, allHolidays] = await Promise.all([
       db.periodos.get(periodId),
       settingsService.get(),
       db.schedules.where('period_id').equals(periodId).and(s => s.active).toArray(),
       db.asignaturas.toArray(),
+      db.holidays.toArray(),
     ])
 
     if (!period) throw new Error('Periodo no encontrado')
@@ -35,6 +36,7 @@ export const honorarioService = {
     const payPerHour = parseFloat(settings.pay_per_hour) || 0
     const payPerMinute = payPerHour / 60
     const subjectMap = Object.fromEntries(allSubjects.map(a => [a.id, a]))
+    const holidayDates = new Set(allHolidays.filter(h => h.active).map(h => h.date))
 
     let docentes
     if (docenteId) {
@@ -50,6 +52,8 @@ export const honorarioService = {
       const entries = []
 
       for (const dateStr of dateRange(period.start_at, period.end_at)) {
+        if (holidayDates.has(dateStr)) continue
+
         const date = new Date(dateStr + 'T00:00:00')
         const dayName = DAY_NAMES[date.getDay()]
         const daySchedules = teacherSchedules.filter(s => s.day === dayName)

@@ -1,11 +1,11 @@
 export const NAV_ITEMS = [
   { label: 'Dashboard', path: '/', module: 'dashboard' },
-  { label: 'Docentes', path: '/docentes', module: 'docentes' },
+  { label: 'Configuración', path: '/settings', module: 'settings' },
+  { label: 'Feriados', path: '/holidays', module: 'holidays' },
+  { label: 'Periodos', path: '/periodos', module: 'periodos' },
   { label: 'Carreras', path: '/carreras', module: 'carreras' },
   { label: 'Asignaturas', path: '/asignaturas', module: 'asignaturas' },
-  { label: 'Periodos', path: '/periodos', module: 'periodos' },
+  { label: 'Docentes', path: '/docentes', module: 'docentes' },
   { label: 'Horarios', path: '/schedules', module: 'schedules' },
-  { label: 'Configuración', path: '/settings', module: 'settings' },
   { label: 'Honorarios', path: '/payroll', module: 'payroll' },
-  { label: 'Feriados', path: '/holidays', module: 'holidays' },
 ]
