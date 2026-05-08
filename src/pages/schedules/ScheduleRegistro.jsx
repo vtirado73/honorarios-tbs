@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import { scheduleService } from '../../modules/schedules/services/scheduleService'
+import { printSchedule } from '../../modules/schedules/utils/printSchedule.jsx'
 import ScheduleForm from '../../modules/schedules/components/ScheduleForm'
 import WeeklyCalendar from '../../modules/schedules/components/WeeklyCalendar'
 import db from '../../database/db'
@@ -11,6 +12,7 @@ export default function ScheduleRegistro() {
   const editGroup = location.state?.editGroup
 
   const [loading, setLoading] = useState(false)
+  const [printLoading, setPrintLoading] = useState(false)
   const [docentes, setDocentes] = useState([])
   const [asignaturas, setAsignaturas] = useState([])
   const [carreras, setCarreras] = useState([])
@@ -152,6 +154,20 @@ export default function ScheduleRegistro() {
     }
   }
 
+  async function handlePrint() {
+    const teacher = docentes.find(d => d.id === formReady?.professorId)
+    const period = periodos.find(p => p.id === selectedPeriodId)
+    if (!teacher || !period || filteredSchedules.length === 0) return
+    try {
+      setPrintLoading(true)
+      await printSchedule({ teacher, period, schedules: filteredSchedules })
+    } catch {
+      alert('Error al generar el PDF')
+    } finally {
+      setPrintLoading(false)
+    }
+  }
+
   if (fetching) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -192,14 +208,29 @@ export default function ScheduleRegistro() {
         </div>
 
         <div className="flex-1 min-w-0">
-          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-            Calendario semanal
-            {!selectedPeriodId && (
-              <span className="ml-2 text-xs font-normal text-gray-400">
-                (seleccione un periodo para ver los horarios existentes)
-              </span>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+              Calendario semanal
+              {!selectedPeriodId && (
+                <span className="ml-2 text-xs font-normal text-gray-400">
+                  (seleccione un periodo para ver los horarios existentes)
+                </span>
+              )}
+            </h2>
+            {filteredSchedules.length > 0 && (
+              <button
+                type="button"
+                disabled={printLoading}
+                onClick={handlePrint}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {printLoading ? 'Generando...' : 'PDF'}
+              </button>
             )}
-          </h2>
+          </div>
           <WeeklyCalendar
             schedules={filteredSchedules}
             loading={calendarLoading || loading}
