@@ -1,5 +1,6 @@
 export const NAV_ITEMS = [
   { label: 'Dashboard', path: '/', module: 'dashboard' },
+  { label: 'Base de Datos', path: '/database', module: 'database' },
   { label: 'Configuración', path: '/settings', module: 'settings' },
   { label: 'Feriados', path: '/holidays', module: 'holidays' },
   { label: 'Periodos', path: '/periodos', module: 'periodos' },

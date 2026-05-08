@@ -1,3 +1,6 @@
+import { useState, useEffect } from 'react'
+import db from '../../database/db'
+
 function StatCard({ title, value, subtitle, color }) {
   const colors = {
     indigo: 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400',
@@ -22,6 +25,50 @@ function StatCard({ title, value, subtitle, color }) {
 }
 
 export default function Dashboard() {
+  const [stats, setStats] = useState({
+    periodos: 0,
+    docentes: 0,
+    asignaturas: 0,
+    horarios: 0,
+    ultimoPeriodo: '',
+  })
+  const [fetching, setFetching] = useState(true)
+
+  useEffect(() => {
+    let mounted = true
+
+    async function load() {
+      try {
+        const [periodos, docentes, asignaturas] = await Promise.all([
+          db.periodos.toArray(),
+          db.docentes.filter(d => d.active).toArray(),
+          db.asignaturas.filter(a => a.active).toArray(),
+        ])
+
+        const sorted = periodos.filter(p => p.active).sort((a, b) => b.created_at.localeCompare(a.created_at))
+        const ultimo = sorted[0]
+        const horarios = ultimo
+          ? await db.schedules.where('period_id').equals(ultimo.id).filter(s => s.active).count()
+          : 0
+
+        if (mounted) {
+          setStats({
+            periodos: periodos.filter(p => p.active).length,
+            docentes: docentes.length,
+            asignaturas: asignaturas.length,
+            horarios,
+            ultimoPeriodo: ultimo ? ultimo.name : '',
+          })
+        }
+      } finally {
+        if (mounted) setFetching(false)
+      }
+    }
+
+    load()
+    return () => { mounted = false }
+  }, [])
+
   return (
     <div>
       <div className="mb-6">
@@ -30,10 +77,10 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard title="Docentes" value="0" subtitle="Totales registrados" color="indigo" />
-        <StatCard title="Carreras" value="0" subtitle="Activas" color="emerald" />
-        <StatCard title="Asignaturas" value="0" subtitle="En el catálogo" color="amber" />
-        <StatCard title="Horarios" value="0" subtitle="Asignados" color="rose" />
+        <StatCard title="Periodos" value={fetching ? '...' : stats.periodos} subtitle="Registrados" color="indigo" />
+        <StatCard title="Docentes" value={fetching ? '...' : stats.docentes} subtitle="Activos" color="emerald" />
+        <StatCard title="Asignaturas" value={fetching ? '...' : stats.asignaturas} subtitle="En el catálogo" color="amber" />
+        <StatCard title="Horarios" value={fetching ? '...' : stats.horarios} subtitle={stats.ultimoPeriodo || 'Asignados'} color="rose" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
