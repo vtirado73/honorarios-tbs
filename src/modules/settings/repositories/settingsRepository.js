@@ -1,10 +1,10 @@
 import db from '../../../database/db'
 
 const SHIFT_DEFAULTS = {
-  morning_start: '08:00',
-  morning_end: '12:00',
+  morning_start: '07:00',
+  morning_end: '14:00',
   afternoon_start: '14:00',
-  afternoon_end: '18:00',
+  afternoon_end: '19:00',
   evening_start: '19:00',
   evening_end: '22:00',
 }

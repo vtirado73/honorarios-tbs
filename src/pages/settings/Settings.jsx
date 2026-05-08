@@ -102,12 +102,12 @@ const SHIFTS = [
 function SettingsForm({ settings, save, saving, hookError, navigate }) {
   const [payPerHour, setPayPerHour] = useState(settings.pay_per_hour)
 
-  const [morningStart, setMorningStart] = useState(settings.morning_start || '')
-  const [morningEnd, setMorningEnd] = useState(settings.morning_end || '')
-  const [afternoonStart, setAfternoonStart] = useState(settings.afternoon_start || '')
-  const [afternoonEnd, setAfternoonEnd] = useState(settings.afternoon_end || '')
-  const [eveningStart, setEveningStart] = useState(settings.evening_start || '')
-  const [eveningEnd, setEveningEnd] = useState(settings.evening_end || '')
+  const [morningStart, setMorningStart] = useState(settings.morning_start || '07:00')
+  const [morningEnd, setMorningEnd] = useState(settings.morning_end || '14:00')
+  const [afternoonStart, setAfternoonStart] = useState(settings.afternoon_start || '14:00')
+  const [afternoonEnd, setAfternoonEnd] = useState(settings.afternoon_end || '19:00')
+  const [eveningStart, setEveningStart] = useState(settings.evening_start || '19:00')
+  const [eveningEnd, setEveningEnd] = useState(settings.evening_end || '22:00')
 
   const [localError, setLocalError] = useState(null)
   const [success, setSuccess] = useState(false)
