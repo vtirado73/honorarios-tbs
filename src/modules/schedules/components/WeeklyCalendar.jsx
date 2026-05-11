@@ -111,8 +111,8 @@ export default function WeeklyCalendar({
     if (sel) return 'bg-emerald-100 dark:bg-emerald-900/40 cursor-pointer'
     if (deleted) return 'bg-red-100 dark:bg-red-900/40 cursor-pointer line-through'
     if (replaced) return 'bg-amber-100 dark:bg-amber-900/40 cursor-pointer'
-    if (hasData) return 'bg-indigo-100 dark:bg-indigo-900/40 cursor-pointer hover:bg-indigo-200 dark:hover:bg-indigo-800/40'
-    if (interactive) return 'bg-white dark:bg-gray-800 cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20'
+    if (hasData) return 'bg-primary-100 dark:bg-primary-900/40 cursor-pointer hover:bg-primary-200 dark:hover:bg-primary-800/40'
+    if (interactive) return 'bg-white dark:bg-gray-800 cursor-pointer hover:bg-primary-50 dark:hover:bg-primary-900/20'
     return 'bg-white dark:bg-gray-800'
   }
 
@@ -206,7 +206,7 @@ export default function WeeklyCalendar({
       </table>
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-gray-800/60">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600" />
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600" />
         </div>
       )}
 

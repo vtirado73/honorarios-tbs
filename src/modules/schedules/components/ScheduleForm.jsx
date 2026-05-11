@@ -120,7 +120,7 @@ export default function ScheduleForm({
             } ${
               errors.professorId
                 ? 'border-red-500 focus:ring-red-500'
-                : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500'
             }`}
           >
             <option value="">Seleccione un docente</option>
@@ -143,7 +143,7 @@ export default function ScheduleForm({
             onChange={e => { setCareerId(e.target.value); setSubjectId(''); clearError('subjectId') }}
             className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
               locked ? 'opacity-60 cursor-not-allowed' : ''
-            } border-gray-300 dark:border-gray-600 focus:ring-indigo-500`}
+            } border-gray-300 dark:border-gray-600 focus:ring-primary-500`}
           >
             <option value="">Todas las carreras</option>
             {activeCarreras.map(c => (
@@ -165,7 +165,7 @@ export default function ScheduleForm({
             } ${
               errors.subjectId
                 ? 'border-red-500 focus:ring-red-500'
-                : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500'
             }`}
           >
             <option value="">
@@ -193,7 +193,7 @@ export default function ScheduleForm({
             } ${
               errors.periodId
                 ? 'border-red-500 focus:ring-red-500'
-                : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500'
             }`}
           >
             <option value="">Seleccione un periodo</option>
@@ -217,7 +217,7 @@ export default function ScheduleForm({
               className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
                 errors.day
                   ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                  : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500'
               }`}
             >
               <option value="">Seleccione un día</option>
@@ -240,7 +240,7 @@ export default function ScheduleForm({
                 className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
                   errors.startAt
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                    : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500'
                 }`}
               />
               {errors.startAt && <p className="text-sm text-red-500 mt-1">{errors.startAt}</p>}
@@ -257,7 +257,7 @@ export default function ScheduleForm({
                 className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
                   errors.endAt
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                    : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500'
                 }`}
               />
               {errors.endAt && <p className="text-sm text-red-500 mt-1">{errors.endAt}</p>}
@@ -270,7 +270,7 @@ export default function ScheduleForm({
         <p className="text-sm text-gray-400 dark:text-gray-500">
           Seleccione los horarios en el calendario de la derecha haciendo clic en las celdas.
           {selectedCount > 0 && (
-            <span className="ml-1 font-medium text-indigo-500 dark:text-indigo-400">
+            <span className="ml-1 font-medium text-primary-500 dark:text-primary-400">
               {selectedCount} horario{selectedCount !== 1 ? 's' : ''} seleccionado{selectedCount !== 1 ? 's' : ''}.
             </span>
           )}
@@ -288,7 +288,7 @@ export default function ScheduleForm({
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {loading ? 'Guardando...' : isCreating ? `Guardar (${selectedCount})` : 'Guardar'}
         </button>

@@ -61,7 +61,7 @@ export default function Header({ onMenuClick }) {
 
         <button
           onClick={() => setOpen(prev => !prev)}
-          className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-700 dark:text-indigo-300 text-sm font-semibold hover:ring-2 hover:ring-indigo-400 transition-all"
+          className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-700 dark:text-primary-300 text-sm font-semibold hover:ring-2 hover:ring-primary-400 transition-all"
           title="Menú de usuario"
         >
           {initial}
@@ -88,7 +88,7 @@ export default function Header({ onMenuClick }) {
                   onClick={() => { setMode(opt.mode); setOpen(false) }}
                   className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
                     mode === opt.mode
-                      ? 'text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30'
+                      ? 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                   }`}
                 >

@@ -33,7 +33,7 @@ export default function HolidayForm({ initialData, onSubmit, onCancel, loading }
           value={title}
           onChange={e => { setTitle(e.target.value); if (errors.title) setErrors(prev => { const n = { ...prev }; delete n.title; return n }) }}
           className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
-            errors.title ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+            errors.title ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500'
           }`}
           placeholder="Ej: Año Nuevo"
         />
@@ -48,7 +48,7 @@ export default function HolidayForm({ initialData, onSubmit, onCancel, loading }
           value={description}
           onChange={e => setDescription(e.target.value)}
           rows={3}
-          className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+          className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors"
           placeholder="Opcional"
         />
       </div>
@@ -62,7 +62,7 @@ export default function HolidayForm({ initialData, onSubmit, onCancel, loading }
           value={date}
           onChange={e => { setDate(e.target.value); if (errors.date) setErrors(prev => { const n = { ...prev }; delete n.date; return n }) }}
           className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
-            errors.date ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+            errors.date ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500'
           }`}
         />
         {errors.date && <p className="text-sm text-red-500 mt-1">{errors.date}</p>}
@@ -79,7 +79,7 @@ export default function HolidayForm({ initialData, onSubmit, onCancel, loading }
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {loading ? 'Guardando...' : isCreating ? 'Guardar' : 'Actualizar'}
         </button>

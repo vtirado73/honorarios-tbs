@@ -70,7 +70,7 @@ export default function DocenteImportar() {
             accept=".xlsx,.xls"
             onChange={handleFile}
             disabled={importing}
-            className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-300 dark:hover:file:bg-indigo-900/50"
+            className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 dark:file:bg-primary-900/30 dark:file:text-primary-300 dark:hover:file:bg-primary-900/50"
           />
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
             Columnas requeridas: name, lastname, surname, ci, email, phone, bank_name, bank_account
@@ -159,7 +159,7 @@ export default function DocenteImportar() {
               <button
                 onClick={handleUpload}
                 disabled={importing || rows.length === 0}
-                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {importing ? 'Subiendo...' : 'Subir datos'}
               </button>

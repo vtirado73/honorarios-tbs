@@ -80,7 +80,7 @@ export default function AsignaturaImportar() {
             accept=".xlsx,.xls"
             onChange={handleFile}
             disabled={importing}
-            className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-300 dark:hover:file:bg-indigo-900/50"
+            className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 dark:file:bg-primary-900/30 dark:file:text-primary-300 dark:hover:file:bg-primary-900/50"
           />
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
             Columnas requeridas: name, acronym, career_acronym
@@ -130,7 +130,7 @@ export default function AsignaturaImportar() {
                   {rows.map((row, i) => (
                     <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                       <td className="px-3 py-2 text-gray-500 dark:text-gray-400">{i + 1}</td>
-                      <td className="px-3 py-2 font-mono font-semibold text-indigo-600 dark:text-indigo-400">{row.acronym}</td>
+                      <td className="px-3 py-2 font-mono font-semibold text-primary-600 dark:text-primary-400">{row.acronym}</td>
                       <td className="px-3 py-2 text-gray-900 dark:text-white">{row.name}</td>
                       <td className="px-3 py-2 text-gray-600 dark:text-gray-300">
                         {careerMap[row.career_acronym] || row.career_acronym}
@@ -161,7 +161,7 @@ export default function AsignaturaImportar() {
               <button
                 onClick={handleUpload}
                 disabled={importing || rows.length === 0}
-                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {importing ? 'Subiendo...' : 'Subir datos'}
               </button>
