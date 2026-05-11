@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx'
 import { asignaturaRepository } from '../repositories/asignaturaRepository'
 import { carreraRepository } from '../../carreras/repositories/carreraRepository'
 
-const EXPECTED_HEADERS = ['name', 'acronym', 'career_acronym']
+const EXPECTED_HEADERS = ['name', 'acronym', 'career_acronym', 'nivel']
 
 export function parseExcel(file) {
   return new Promise((resolve, reject) => {
@@ -68,6 +68,7 @@ export async function importAsignaturas(rows) {
         name: row.name,
         acronym: row.acronym,
         career_id: careerId,
+        nivel: row.nivel ? Number(row.nivel) : undefined,
       }
       await asignaturaRepository.create(data)
       results.success++

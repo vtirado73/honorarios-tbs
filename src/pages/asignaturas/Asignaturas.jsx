@@ -64,6 +64,7 @@ export default function Asignaturas() {
                 <th className="px-4 py-3 font-medium w-12">N°</th>
                 <th className="px-4 py-3 font-medium w-28">Sigla</th>
                 <th className="px-4 py-3 font-medium">Nombre</th>
+                <th className="px-4 py-3 font-medium w-16">Nivel</th>
                 <th className="px-4 py-3 font-medium">Carrera</th>
                 <th className="px-4 py-3 font-medium w-24">Estado</th>
                 <th className="px-4 py-3 font-medium w-24 text-right">Acciones</th>
@@ -72,11 +73,11 @@ export default function Asignaturas() {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-gray-400">Cargando...</td>
+                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">Cargando...</td>
                 </tr>
               ) : asignaturas.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
                     <p className="mb-3">No hay asignaturas registradas</p>
                     <button
                       onClick={() => navigate('/asignaturas/importar')}
@@ -94,6 +95,7 @@ export default function Asignaturas() {
                       <span className="font-mono font-semibold text-indigo-600 dark:text-indigo-400">{a.acronym}</span>
                     </td>
                     <td className="px-4 py-3 text-gray-900 dark:text-white font-medium">{a.name}</td>
+                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300 text-center">{a.nivel ?? '—'}</td>
                     <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
                       {carrerasMap[a.career_id] || '—'}
                     </td>

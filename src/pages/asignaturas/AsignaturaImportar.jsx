@@ -83,7 +83,7 @@ export default function AsignaturaImportar() {
             className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-300 dark:hover:file:bg-indigo-900/50"
           />
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-            Columnas requeridas: name, acronym, career_acronym
+            Columnas requeridas: name, acronym, career_acronym, nivel
           </p>
         </div>
 
@@ -122,6 +122,7 @@ export default function AsignaturaImportar() {
                     <th className="px-3 py-2 font-medium w-16">N°</th>
                     <th className="px-3 py-2 font-medium">Sigla</th>
                     <th className="px-3 py-2 font-medium">Nombre</th>
+                    <th className="px-3 py-2 font-medium w-16">Nivel</th>
                     <th className="px-3 py-2 font-medium">Carrera</th>
                     <th className="px-3 py-2 font-medium text-right w-24">Acción</th>
                   </tr>
@@ -132,6 +133,7 @@ export default function AsignaturaImportar() {
                       <td className="px-3 py-2 text-gray-500 dark:text-gray-400">{i + 1}</td>
                       <td className="px-3 py-2 font-mono font-semibold text-indigo-600 dark:text-indigo-400">{row.acronym}</td>
                       <td className="px-3 py-2 text-gray-900 dark:text-white">{row.name}</td>
+                      <td className="px-3 py-2 text-gray-600 dark:text-gray-300 text-center">{row.nivel || '—'}</td>
                       <td className="px-3 py-2 text-gray-600 dark:text-gray-300">
                         {careerMap[row.career_acronym] || row.career_acronym}
                       </td>

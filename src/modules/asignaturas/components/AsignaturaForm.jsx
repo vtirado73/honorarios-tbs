@@ -3,6 +3,7 @@ import { useState } from 'react'
 export default function AsignaturaForm({ initialData, carreras, defaultCareerId, onSubmit, onCancel, loading }) {
   const [name, setName] = useState(() => initialData?.name ?? '')
   const [acronym, setAcronym] = useState(() => initialData?.acronym ?? '')
+  const [nivel, setNivel] = useState(() => initialData?.nivel ?? '')
   const [careerId, setCareerId] = useState(() => initialData?.career_id ?? defaultCareerId ?? '')
   const [errors, setErrors] = useState({})
 
@@ -14,6 +15,8 @@ export default function AsignaturaForm({ initialData, carreras, defaultCareerId,
     if (!name.trim()) errs.name = 'El nombre es obligatorio'
     if (!acronym.trim()) errs.acronym = 'La sigla es obligatoria'
     if (!careerId) errs.careerId = 'Debe seleccionar una carrera'
+    const n = Number(nivel)
+    if (!Number.isInteger(n) || n < 1 || n > 12) errs.nivel = 'El nivel debe ser un número entre 1 y 12'
     setErrors(errs)
     return Object.keys(errs).length === 0
   }
@@ -25,6 +28,7 @@ export default function AsignaturaForm({ initialData, carreras, defaultCareerId,
       name: name.trim(),
       acronym: acronym.trim().toUpperCase(),
       career_id: careerId,
+      nivel: Number(nivel),
     })
   }
 
@@ -68,6 +72,26 @@ export default function AsignaturaForm({ initialData, carreras, defaultCareerId,
           placeholder="Ej: Introducción a la Programación"
         />
         {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name}</p>}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Nivel (año/semestre) <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="number"
+          value={nivel}
+          onChange={e => { setNivel(e.target.value); clearError('nivel') }}
+          min={1}
+          max={12}
+          className={`w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
+            errors.nivel
+              ? 'border-red-500 focus:ring-red-500'
+              : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+          }`}
+          placeholder="Ej: 1"
+        />
+        {errors.nivel && <p className="text-sm text-red-500 mt-1">{errors.nivel}</p>}
       </div>
 
       <div>

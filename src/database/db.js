@@ -42,4 +42,8 @@ db.version(10).stores({
   users: 'id, user',
 })
 
+db.version(11).stores({
+  asignaturas: 'id, &acronym, name, career_id, nivel, active, created_at',
+})
+
 export default db
