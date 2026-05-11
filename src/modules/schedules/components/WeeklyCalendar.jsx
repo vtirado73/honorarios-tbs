@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 const DAYS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
 
 function generateTimeSlots() {
@@ -70,6 +72,13 @@ export default function WeeklyCalendar({
     }
   }
 
+  const [hoveredRow, setHoveredRow] = useState(null)
+  const [hoveredCol, setHoveredCol] = useState(null)
+
+  function isHoveredCell(rowIdx, colIdx) {
+    return (hoveredRow === rowIdx) || (hoveredCol === colIdx)
+  }
+
   function getScheduleInfo(row, col) {
     return scheduleMap[`${row}-${col}`] || []
   }
@@ -117,7 +126,9 @@ export default function WeeklyCalendar({
   }
 
   return (
-    <div className="overflow-auto max-h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800">
+    <div className="overflow-auto max-h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800"
+      onMouseLeave={() => { setHoveredRow(null); setHoveredCol(null) }}
+    >
       <table className="w-full text-xs border-collapse">
         <thead>
           <tr className="sticky top-0 z-10 bg-gray-50 dark:bg-gray-900">
@@ -127,10 +138,15 @@ export default function WeeklyCalendar({
             <th className="px-1 py-2 text-center text-gray-500 dark:text-gray-400 font-medium border-b border-r border-gray-200 dark:border-gray-700 min-w-[32px] w-[32px]">
               Hasta
             </th>
-            {DAYS.map(day => (
+            {DAYS.map((day, colIdx) => (
               <th
                 key={day}
-                className="px-1 py-2 text-center text-gray-600 dark:text-gray-300 font-medium border-b border-r border-gray-200 dark:border-gray-700 min-w-[70px] capitalize"
+                onMouseEnter={() => setHoveredCol(colIdx)}
+                className={`px-1 py-2 text-center font-medium border-b border-r border-gray-200 dark:border-gray-700 min-w-[70px] capitalize transition-colors ${
+                  hoveredCol === colIdx
+                    ? 'text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/20'
+                    : 'text-gray-600 dark:text-gray-300'
+                }`}
               >
                 {day}
               </th>
@@ -138,15 +154,34 @@ export default function WeeklyCalendar({
           </tr>
         </thead>
         <tbody>
-          {TIME_SLOTS.slice(0, -1).map((time, rowIdx) => {
+            {TIME_SLOTS.slice(0, -1).map((time, rowIdx) => {
             const nextTime = TIME_SLOTS[rowIdx + 1]
             const isHour = time.endsWith(':00')
+            const rowHovered = hoveredRow === rowIdx
             return (
               <tr key={time} className={`${!isHour ? 'bg-gray-50/50 dark:bg-gray-700/20' : ''}`}>
-                <td className={`px-1 py-1 text-center text-gray-500 dark:text-gray-400 border-b border-r border-gray-200 dark:border-gray-700 ${isHour ? 'font-semibold text-gray-700 dark:text-gray-200' : ''}`}>
+                <td
+                  onMouseEnter={() => setHoveredRow(rowIdx)}
+                  className={`px-1 py-1 text-center border-b border-r border-gray-200 dark:border-gray-700 transition-colors ${
+                    isHour ? 'font-semibold' : ''
+                  } ${
+                    rowHovered
+                      ? 'text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/20'
+                      : 'text-gray-500 dark:text-gray-400'
+                  }`}
+                >
                   {time}
                 </td>
-                <td className={`px-1 py-1 text-center text-gray-500 dark:text-gray-400 border-b border-r border-gray-200 dark:border-gray-700 ${isHour ? 'font-semibold text-gray-700 dark:text-gray-200' : ''}`}>
+                <td
+                  onMouseEnter={() => setHoveredRow(rowIdx)}
+                  className={`px-1 py-1 text-center border-b border-r border-gray-200 dark:border-gray-700 transition-colors ${
+                    isHour ? 'font-semibold' : ''
+                  } ${
+                    rowHovered
+                      ? 'text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/20'
+                      : 'text-gray-500 dark:text-gray-400'
+                  }`}
+                >
                   {nextTime}
                 </td>
                 {DAYS.map((day, colIdx) => {
@@ -156,11 +191,13 @@ export default function WeeklyCalendar({
                   const replaced = hasData && data.some(s => replaceTargets?.has(s.id))
                   const deleted = hasData && data.some(s => deleteTargets?.has(s.id))
 
+                  const hovered = isHoveredCell(rowIdx, colIdx)
                   return (
                     <td
                       key={`${time}-${day}`}
+                      onMouseEnter={() => { setHoveredRow(rowIdx); setHoveredCol(colIdx) }}
                       onClick={(e) => handleCellClick(e, rowIdx, day, time, nextTime)}
-                      className={`px-1 py-1 text-center border-b border-r border-gray-200 dark:border-gray-700 transition-colors select-none ${cellStyle(hasData, sel, replaced, deleted)}`}
+                      className={`px-1 py-1 text-center border-b border-r border-gray-200 dark:border-gray-700 transition-colors select-none ${cellStyle(hasData, sel, replaced, deleted)} ${hovered ? 'bg-indigo-50/70 dark:bg-indigo-900/15' : ''}`}
                       title={
                         sel && subjectAcronym
                           ? subjectAcronym
