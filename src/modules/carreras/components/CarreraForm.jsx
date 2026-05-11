@@ -30,7 +30,7 @@ export default function CarreraForm({ initialData, onSubmit, onCancel, loading }
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Sigla <span className="text-red-500">*</span>
+          Sigla <span className="text-red-500 dark:text-red-400">*</span>
         </label>
         <input
           type="text"
@@ -43,12 +43,12 @@ export default function CarreraForm({ initialData, onSubmit, onCancel, loading }
           }`}
           placeholder="Ej: INF-101"
         />
-        {errors.acronym && <p className="text-sm text-red-500 mt-1">{errors.acronym}</p>}
+        {errors.acronym && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.acronym}</p>}
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Nombre de la carrera <span className="text-red-500">*</span>
+          Nombre de la carrera <span className="text-red-500 dark:text-red-400">*</span>
         </label>
         <input
           type="text"
@@ -61,7 +61,7 @@ export default function CarreraForm({ initialData, onSubmit, onCancel, loading }
           }`}
           placeholder="Ej: Ingeniería en Sistemas"
         />
-        {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name}</p>}
+        {errors.name && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.name}</p>}
       </div>
 
       <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">

@@ -23,7 +23,7 @@ export default function DocenteEditar() {
 
   if (!id) {
     return (
-      <div className="p-4 text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg">
+      <div className="p-4 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg">
         Docente no encontrado
       </div>
     )
@@ -37,7 +37,7 @@ export default function DocenteEditar() {
 
   if (error || !docente) {
     return (
-      <div className="p-4 text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg">
+      <div className="p-4 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg">
         {error || 'Docente no encontrado'}
       </div>
     )

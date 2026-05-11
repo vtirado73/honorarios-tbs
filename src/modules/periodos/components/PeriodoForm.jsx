@@ -36,7 +36,7 @@ export default function PeriodoForm({ initialData, onSubmit, onCancel, loading }
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Nombre del periodo <span className="text-red-500">*</span>
+          Nombre del periodo <span className="text-red-500 dark:text-red-400">*</span>
         </label>
         <input
           type="text"
@@ -49,13 +49,13 @@ export default function PeriodoForm({ initialData, onSubmit, onCancel, loading }
           }`}
           placeholder="Ej: Semestre 1-2026"
         />
-        {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name}</p>}
+        {errors.name && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.name}</p>}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Fecha de inicio <span className="text-red-500">*</span>
+            Fecha de inicio <span className="text-red-500 dark:text-red-400">*</span>
           </label>
           <input
             type="date"
@@ -67,12 +67,12 @@ export default function PeriodoForm({ initialData, onSubmit, onCancel, loading }
                 : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
             }`}
           />
-          {errors.startAt && <p className="text-sm text-red-500 mt-1">{errors.startAt}</p>}
+          {errors.startAt && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.startAt}</p>}
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Fecha de fin <span className="text-red-500">*</span>
+            Fecha de fin <span className="text-red-500 dark:text-red-400">*</span>
           </label>
           <input
             type="date"
@@ -85,7 +85,7 @@ export default function PeriodoForm({ initialData, onSubmit, onCancel, loading }
                 : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
             }`}
           />
-          {errors.endAt && <p className="text-sm text-red-500 mt-1">{errors.endAt}</p>}
+          {errors.endAt && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.endAt}</p>}
         </div>
       </div>
 

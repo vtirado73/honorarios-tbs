@@ -33,7 +33,7 @@ export default function HolidayEditar() {
 
   if (!holiday) {
     return (
-      <div className="p-4 text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg">
+      <div className="p-4 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg">
         Feriado no encontrado
       </div>
     )

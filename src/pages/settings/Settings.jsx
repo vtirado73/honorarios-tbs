@@ -51,12 +51,12 @@ function MoneyInput({ value, onChange, error, disabled }) {
         }`}
       />
       {showError && (
-        <p className="mt-1 text-xs text-red-500">
+        <p className="mt-1 text-xs text-red-500 dark:text-red-400">
           Ingrese un número entero o con 2 decimales (ej: 150 o 150.00)
         </p>
       )}
       {error && (
-        <p className="mt-1 text-xs text-red-500">{error}</p>
+        <p className="mt-1 text-xs text-red-500 dark:text-red-400">{error}</p>
       )}
     </div>
   )

@@ -28,6 +28,7 @@ import HolidayRegistro from './pages/holidays/HolidayRegistro'
 import HolidayEditar from './pages/holidays/HolidayEditar'
 import Login from './pages/login/Login'
 import Profile from './pages/profile/Profile'
+import Reportes from './pages/reportes/Reportes'
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth()
@@ -86,6 +87,7 @@ export default function App() {
               <Route path="registro" element={<HolidayRegistro />} />
               <Route path="editar/:id" element={<HolidayEditar />} />
             </Route>
+            <Route path="reportes" element={<Reportes />} />
             <Route path="database" element={<Database />} />
             <Route path="profile" element={<Profile />} />
             <Route path="*" element={<Navigate to="/" replace />} />

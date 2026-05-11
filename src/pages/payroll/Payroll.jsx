@@ -127,7 +127,7 @@ export default function Payroll() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Docente <span className="text-xs text-gray-400">(opcional — vacío = todos)</span>
+              Docente <span className="text-xs text-gray-400 dark:text-gray-500">(opcional — vacío = todos)</span>
             </label>
             <input
               type="text"
@@ -149,7 +149,7 @@ export default function Payroll() {
               ))}
             </select>
             {filteredDocentes.length === 0 && docenteFilter && (
-              <p className="text-xs text-gray-400 mt-1">Sin resultados</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Sin resultados</p>
             )}
           </div>
 
@@ -249,7 +249,7 @@ export default function Payroll() {
                   <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                     {teacher.entries.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="px-3 py-8 text-center text-gray-400">
+                        <td colSpan={9} className="px-3 py-8 text-center text-gray-400 dark:text-gray-500">
                           Sin horarios registrados en este periodo
                         </td>
                       </tr>

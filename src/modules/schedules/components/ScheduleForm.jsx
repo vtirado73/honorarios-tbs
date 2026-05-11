@@ -47,7 +47,9 @@ export default function ScheduleForm({
 
   const activeDocentes = docentes.filter(d => d.active)
   const activeCarreras = carreras.filter(c => c.active)
-  const asignaturasFiltradas = asignaturas.filter(a => a.active && (!careerId || a.career_id === careerId))
+  const asignaturasFiltradas = asignaturas
+    .filter(a => a.active && (!careerId || a.career_id === careerId))
+    .sort((a, b) => (a.nivel || 0) - (b.nivel || 0) || a.name.localeCompare(b.name))
   const activePeriodos = periodos.filter(p => p.active)
 
   useEffect(() => {
@@ -109,7 +111,7 @@ export default function ScheduleForm({
       <div className="grid grid-cols-1 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Docente <span className="text-red-500">*</span>
+            Docente <span className="text-red-500 dark:text-red-400">*</span>
           </label>
           <select
             value={professorId}
@@ -130,7 +132,7 @@ export default function ScheduleForm({
               </option>
             ))}
           </select>
-          {errors.professorId && <p className="text-sm text-red-500 mt-1">{errors.professorId}</p>}
+          {errors.professorId && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.professorId}</p>}
         </div>
 
         <div>
@@ -154,7 +156,7 @@ export default function ScheduleForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Asignatura <span className="text-red-500">*</span>
+            Asignatura <span className="text-red-500 dark:text-red-400">*</span>
           </label>
           <select
             value={subjectId}
@@ -174,15 +176,15 @@ export default function ScheduleForm({
                 : 'Seleccione una asignatura'}
             </option>
             {asignaturasFiltradas.map(a => (
-              <option key={a.id} value={a.id}>{a.name} ({a.acronym})</option>
+              <option key={a.id} value={a.id}>{a.nivel ? `Nivel ${a.nivel} - ` : ''}{a.name} ({a.acronym})</option>
             ))}
           </select>
-          {errors.subjectId && <p className="text-sm text-red-500 mt-1">{errors.subjectId}</p>}
+          {errors.subjectId && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.subjectId}</p>}
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Periodo académico <span className="text-red-500">*</span>
+            Periodo académico <span className="text-red-500 dark:text-red-400">*</span>
           </label>
           <select
             value={periodId}
@@ -201,7 +203,7 @@ export default function ScheduleForm({
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
           </select>
-          {errors.periodId && <p className="text-sm text-red-500 mt-1">{errors.periodId}</p>}
+          {errors.periodId && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.periodId}</p>}
         </div>
       </div>
 
@@ -209,7 +211,7 @@ export default function ScheduleForm({
         <>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Día <span className="text-red-500">*</span>
+              Día <span className="text-red-500 dark:text-red-400">*</span>
             </label>
             <select
               value={day}
@@ -225,13 +227,13 @@ export default function ScheduleForm({
                 <option key={d.value} value={d.value}>{d.label}</option>
               ))}
             </select>
-            {errors.day && <p className="text-sm text-red-500 mt-1">{errors.day}</p>}
+            {errors.day && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.day}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Hora inicio <span className="text-red-500">*</span>
+                Hora inicio <span className="text-red-500 dark:text-red-400">*</span>
               </label>
               <input
                 type="time"
@@ -243,12 +245,12 @@ export default function ScheduleForm({
                     : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
                 }`}
               />
-              {errors.startAt && <p className="text-sm text-red-500 mt-1">{errors.startAt}</p>}
+              {errors.startAt && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.startAt}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Hora fin <span className="text-red-500">*</span>
+                Hora fin <span className="text-red-500 dark:text-red-400">*</span>
               </label>
               <input
                 type="time"
@@ -260,7 +262,7 @@ export default function ScheduleForm({
                     : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
                 }`}
               />
-              {errors.endAt && <p className="text-sm text-red-500 mt-1">{errors.endAt}</p>}
+              {errors.endAt && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.endAt}</p>}
             </div>
           </div>
         </>

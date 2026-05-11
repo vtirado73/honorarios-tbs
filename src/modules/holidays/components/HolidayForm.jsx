@@ -26,7 +26,7 @@ export default function HolidayForm({ initialData, onSubmit, onCancel, loading }
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Título <span className="text-red-500">*</span>
+          Título <span className="text-red-500 dark:text-red-400">*</span>
         </label>
         <input
           type="text"
@@ -37,7 +37,7 @@ export default function HolidayForm({ initialData, onSubmit, onCancel, loading }
           }`}
           placeholder="Ej: Año Nuevo"
         />
-        {errors.title && <p className="text-sm text-red-500 mt-1">{errors.title}</p>}
+        {errors.title && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.title}</p>}
       </div>
 
       <div>
@@ -55,7 +55,7 @@ export default function HolidayForm({ initialData, onSubmit, onCancel, loading }
 
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Fecha <span className="text-red-500">*</span>
+          Fecha <span className="text-red-500 dark:text-red-400">*</span>
         </label>
         <input
           type="date"
@@ -65,7 +65,7 @@ export default function HolidayForm({ initialData, onSubmit, onCancel, loading }
             errors.date ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
           }`}
         />
-        {errors.date && <p className="text-sm text-red-500 mt-1">{errors.date}</p>}
+        {errors.date && <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.date}</p>}
       </div>
 
       <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">

@@ -72,7 +72,7 @@ export default function DocenteForm({ initialData, onSubmit, onCancel, loading }
           <div key={f.name}>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {f.label}
-              {f.required && <span className="text-red-500 ml-1">*</span>}
+              {f.required && <span className="text-red-500 dark:text-red-400 ml-1">*</span>}
             </label>
             <input
               type={f.type || 'text'}
@@ -85,7 +85,7 @@ export default function DocenteForm({ initialData, onSubmit, onCancel, loading }
               }`}
             />
             {errors[f.name] && (
-              <p className="text-sm text-red-500 mt-1">{errors[f.name]}</p>
+              <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors[f.name]}</p>
             )}
           </div>
         ))}

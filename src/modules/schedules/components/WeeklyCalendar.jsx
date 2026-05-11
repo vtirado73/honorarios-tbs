@@ -185,11 +185,11 @@ export default function WeeklyCalendar({
                             return (
                               <div
                                 key={s.id}
-                                className={`truncate max-w-[70px] ${isDeleted ? 'line-through text-red-600 dark:text-red-400' : ''} ${isReplaced ? 'text-amber-700 dark:text-amber-300' : ''}`}
+                                className={`truncate max-w-[70px] text-gray-700 dark:text-gray-200 ${isDeleted ? 'line-through text-red-600 dark:text-red-400' : ''} ${isReplaced ? 'text-amber-700 dark:text-amber-300' : ''}`}
                                 title={s.subject_name}
                               >
                                 {isReplaced ? (
-                                  <><span className="line-through text-red-500">{s.subject_acronym || s.subject_name}</span><span className="text-emerald-600 dark:text-emerald-400">/{subjectAcronym}</span></>
+                                  <><span className="line-through text-red-600 dark:text-red-400">{s.subject_acronym || s.subject_name}</span><span className="text-emerald-600 dark:text-emerald-400">/{subjectAcronym}</span></>
                                 ) : (s.subject_acronym || s.subject_name)}
                               </div>
                             )

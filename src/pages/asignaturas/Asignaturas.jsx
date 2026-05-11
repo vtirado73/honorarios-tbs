@@ -30,7 +30,7 @@ export default function Asignaturas() {
 
   if (error) {
     return (
-      <div className="p-4 text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg">
+      <div className="p-4 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg">
         Error al cargar asignaturas: {error}
       </div>
     )
@@ -123,7 +123,7 @@ export default function Asignaturas() {
                           onClick={() => handleToggleActive(a)}
                           className={`p-1.5 rounded-lg transition-colors ${
                             a.active
-                              ? 'text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-900/20'
+                              ? 'text-gray-500 hover:text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-900/20'
                               : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:text-emerald-400 dark:hover:bg-emerald-900/20'
                           }`}
                           title={a.active ? 'Desactivar' : 'Activar'}

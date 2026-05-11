@@ -8,5 +8,6 @@ export const NAV_ITEMS = [
   { label: 'Asignaturas', path: '/asignaturas', module: 'asignaturas' },
   { label: 'Docentes', path: '/docentes', module: 'docentes' },
   { label: 'Horarios', path: '/schedules', module: 'schedules' },
+  { label: 'Reportes', path: '/reportes', module: 'reportes' },
   { label: 'Honorarios', path: '/payroll', module: 'payroll' },
 ]
