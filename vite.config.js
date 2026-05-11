@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => ({
         name: 'Horarios - Gestión Docente',
         short_name: 'Horarios',
         description: 'Sistema de gestión de horarios docentes y honorarios',
-        theme_color: '#001496',
+        theme_color: '#4f46e5',
         background_color: '#ffffff',
         display: 'standalone',
         scope: mode === 'production' ? '/honorarios-tbs/' : '/',

@@ -92,7 +92,7 @@ export default function Payroll() {
   if (fetching) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
       </div>
     )
   }
@@ -116,7 +116,7 @@ export default function Payroll() {
             <select
               value={periodId}
               onChange={e => setPeriodId(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="">Seleccione un periodo</option>
               {activePeriodos.map(p => (
@@ -134,12 +134,12 @@ export default function Payroll() {
               placeholder="Buscar por CI o nombre..."
               value={docenteFilter}
               onChange={e => { setDocenteFilter(e.target.value); setDocenteId('') }}
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 mb-2"
+              className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-2"
             />
             <select
               value={effectiveDocenteId}
               onChange={e => setDocenteId(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="">— Todos los docentes —</option>
               {filteredDocentes.map(d => (
@@ -157,7 +157,7 @@ export default function Payroll() {
             <button
               onClick={handleGenerate}
               disabled={!periodId || loading}
-              className="w-full px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              className="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
               {loading ? (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
@@ -183,7 +183,7 @@ export default function Payroll() {
       {loading && (
         <div className="flex items-center justify-center py-24">
           <div className="flex flex-col items-center gap-3">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600" />
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600" />
             <p className="text-sm text-gray-500 dark:text-gray-400">Generando reporte...</p>
           </div>
         </div>
@@ -281,7 +281,7 @@ export default function Payroll() {
                   </tbody>
                   {teacher.entries.length > 0 && (
                     <tfoot>
-                      <tr className="bg-primary-50 dark:bg-primary-900/20 font-semibold text-sm">
+                      <tr className="bg-indigo-50 dark:bg-indigo-900/20 font-semibold text-sm">
                         <td colSpan={5} className="px-3 py-2 text-right text-gray-700 dark:text-gray-300">
                           Total {teacher.name}
                         </td>
@@ -289,7 +289,7 @@ export default function Payroll() {
                           {teacher.totalMinutes}
                         </td>
                         <td colSpan={2}></td>
-                        <td className="px-3 py-2 text-right text-primary-700 dark:text-primary-300 tabular-nums">
+                        <td className="px-3 py-2 text-right text-indigo-700 dark:text-indigo-300 tabular-nums">
                           Bs {report.formatCurrency(teacher.totalPay)}
                         </td>
                       </tr>
@@ -302,7 +302,7 @@ export default function Payroll() {
 
           {/* Grand total */}
           {report.teachers.length > 1 && (
-            <div className="bg-primary-600 dark:bg-primary-500 rounded-xl shadow-sm px-6 py-4 text-white">
+            <div className="bg-indigo-600 dark:bg-indigo-500 rounded-xl shadow-sm px-6 py-4 text-white">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-bold">Total general pagado</span>
                 <span className="text-2xl font-bold">Bs {report.formatCurrency(report.grandTotal)}</span>

@@ -106,7 +106,7 @@ export default function Database() {
           <button
             onClick={handleBackup}
             disabled={backupLoading}
-            className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
           >
             {backupLoading ? 'Generando...' : 'Descargar copia'}
           </button>
