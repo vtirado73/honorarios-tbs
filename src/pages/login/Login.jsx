@@ -93,6 +93,10 @@ export default function Login() {
             Ingresar
           </button>
         </form>
+
+        <p className="text-center text-xs text-gray-400 dark:text-gray-600 mt-6">
+          Desarrollado por Ing. Víctor Hugo Tirado Peñaranda - Docente TBS Potosí
+        </p>
       </div>
     </div>
   )
