@@ -18,7 +18,7 @@ export default function DashboardLayout() {
         </main>
 
         <footer className="px-4 lg:px-6 py-3 border-t border-gray-200 dark:border-gray-800 text-center text-xs text-gray-400 dark:text-gray-600">
-          &copy; {new Date().getFullYear()} LecturerFees. Todos los derechos reservados.
+          Desarrollado por Ing. Víctor Hugo Tirado Peñaranda<br />Docente TBS Potosí
         </footer>
       </div>
     </div>
